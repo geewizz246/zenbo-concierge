@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:weightSum="100"
+    tools:context=".MenuActivity">
+
+    <ImageView
+        android:id="@+id/imageview_item_img"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="60"
+        app:srcCompat="@drawable/clipart_plate" />
+
+    <TextView
+        android:id="@+id/textview_menu_item_name"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:background="#00333333"
+        android:gravity="center"
+        android:text="@string/menu_item_name_default"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#000000"
+        android:textSize="16sp" />
+
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:layout_weight="33.3"-->
+    <!--        android:orientation="vertical">-->
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/textview_item_id"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="30dp"-->
+    <!--            android:text="@string/menu_item_id_default"-->
+    <!--            android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+    <!--            android:textColor="#368039" />-->
+
+    <TextView
+        android:id="@+id/textview_menu_item_price"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:gravity="center"
+        android:text="@string/menu_item_price_default"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <!--    </LinearLayout>-->
+
+</LinearLayout>

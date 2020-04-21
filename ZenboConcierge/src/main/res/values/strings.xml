@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">ZenboConcierge</string>
+    <string name="label_pin">PIN</string>
+    <string name="label_email">UWI Email</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="login_heading">ZenboConcierge</string>
+    <string name="response_login_success">login success</string>
+    <string name="zenbo_speak_login_prompt">
+        Welcome to ZenboConcierge. Please enter your email and pin to continue.
+    </string>
+    <string name="login_fail_alert_title">Something went wrong</string>
+    <string name="login_success_message">login successful</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="menu_item_name_default">Item Name</string>
+    <string name="menu_item_price_default">$ 0.00</string>
+    <string name="menu_item_id_default">Item Id</string>
+    <string name="order_menu_title">Menu</string>
+    <string name="order_preview_title">Cart</string>
+    <string name="order_preview_placeholder">Nothing selected yet.</string>
+    <string name="order_preview_total_placeholder">$0.00</string>
+    <string name="order_preview_total_title_placeholder">Total</string>
+    <string name="btn_order_checkout_text">Checkout</string>
+    <string name="btn_order_cancel_text">Cancel</string>
+    <string name="cancel_order_title">Are you sure?</string>
+    <string name="cancel_order_message">If you leave now, you will lose all progress on your order. This action cannot be undone.</string>
+    <string name="login_subheading">Enter your credentials to continue.</string>
+    <string name="order_summary_item_price_heading">Price</string>
+    <string name="order_summary_item_quantity_heading">Quantity</string>
+    <string name="order_summary_item_name_heading">Item Name</string>
+    <string name="order_summary_title">Order Summary</string>
+    <string name="order_summary_order_id_placeholder">[order ID]</string>
+    <string name="order_summary_order_id_title">Order ID:</string>
+    <string name="pickup_time_input_placeholder">Please choose time</string>
+    <string name="login_title">WELCOME</string>
+    <string name="hint_email">Enter UWI email</string>
+    <string name="hint_pin">Enter 4-digit PIN</string>
+    <string name="title_activity_main">MainActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="zenbo_speak_login_fail">Oh no. Something went wrong. Please try again.</string>
+    <string name="zenbo_speak_menu_greeting">Hello %s. Nice to see you. Select the items you want and checkout when you\'re ready.</string>
+    <string name="zenbo_speak_cancel_warning">Are your sure you want to leave now? If you do, you\'ll lose all progress on your order.</string>
+    <string name="zenbo_speak_order_success">Thank you %s. Your order was created successfully. Hope you enjoy your meal!</string>
+</resources>
