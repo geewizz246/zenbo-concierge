@@ -38,6 +38,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,7 @@ import cz.msebera.android.httpclient.entity.StringEntity;
 public class MenuActivity extends RobotActivity {
     private static final String TAG = "MenuActivity";
     private static Boolean isMenuActive = false;
+    private Date orderStart;
 
     private Customer customer;
     private Order order;
@@ -151,13 +153,8 @@ public class MenuActivity extends RobotActivity {
         enableButtons();
 
         if (order != null) {
-            if (order.getOrderAborted() && !order.isOrderComplete) {
-                // Assume the order is still being performed
-                order.setOrderAborted(false);
-                Log.d(TAG, "Order " + order.getOrderId() + " not aborted");
-                // Send an update to the server
-                saveOrder();
-            }
+            // Assume the order is still being performed
+            Log.d(TAG, "Order " + order.getOrderId() + " not aborted");
         }
     }
 
@@ -167,13 +164,10 @@ public class MenuActivity extends RobotActivity {
         Log.d(TAG, TAG + " paused");
 
         if (order != null && isMenuActive) {
-            if (!order.getOrderAborted() && !order.isOrderComplete) {
-                // Assume the order was aborted
-                order.setOrderAborted(true);
-                Log.d(TAG, "Order " + order.getOrderId() + " aborted");
-                // Send an update to the server
-                saveOrder();
-            }
+            // Assume the order was aborted
+            Log.d(TAG, "Order " + order.getOrderId() + " aborted");
+            // Send an update to the server
+            saveOrder();
         }
     }
 
@@ -228,11 +222,12 @@ public class MenuActivity extends RobotActivity {
         // Initialise the order
         JSONObject orderParams = new JSONObject();
         StringEntity orderEntity = null;
-        final Date today = new Date();
+        orderStart = new Date();
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH:mm:ss.SSSZ", Locale.ENGLISH);
         try {
-            orderParams.put("requestedPickUpTime", dateFormat.format(today));
-            orderParams.put("orderDate", dateFormat.format(today));
+            orderParams.put("requestedPickUpTime", dateFormat.format(orderStart));
+            orderParams.put("orderDate", dateFormat.format(orderStart));
+            orderParams.put("numOfRepetitions", 0);
             JSONObject jsonCust = new JSONObject();
             jsonCust.put("email", customer.getEmail());
             orderParams.put("customer", jsonCust);
@@ -250,6 +245,7 @@ public class MenuActivity extends RobotActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 order = new Order(response);
+                Log.d(TAG, order.toString());
             }
 
             @Override
@@ -309,7 +305,12 @@ public class MenuActivity extends RobotActivity {
     }
 
     private void saveOrder() {
+        // Get the time when the order was stopped and set new duration
+        final Date now = new Date();
+        long duration = (now.getTime() - orderStart.getTime()) / 1000;
+        order.setOrderDurationInSeconds(duration);
         Log.d(TAG, order.toString());
+
         // Disable buttons to prevent double submission
         btnCheckout.setEnabled(false);
         btnCancel.setEnabled(false);
@@ -385,7 +386,7 @@ public class MenuActivity extends RobotActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 // Record the order being aborted
-                order.setOrderAborted(true);
+                order.setOrderSuccessful(false);
                 Log.d(TAG, "Order " + order.getOrderId() + " aborted");
                 // Send an update to the server for this order
                 saveOrder();

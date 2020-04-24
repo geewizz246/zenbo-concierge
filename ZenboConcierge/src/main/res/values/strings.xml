@@ -48,4 +48,5 @@
     <string name="zenbo_speak_menu_greeting">Hello %s. Nice to see you. Select the items you want and checkout when you\'re ready.</string>
     <string name="zenbo_speak_cancel_warning">Are your sure you want to leave now? If you do, you\'ll lose all progress on your order.</string>
     <string name="zenbo_speak_order_success">Thank you %s. Your order was created successfully. Hope you enjoy your meal!</string>
+    <string name="zenbo_speak_order_summary">Okay I received your order. Take a moment to review and select a pickup time.</string>
 </resources>

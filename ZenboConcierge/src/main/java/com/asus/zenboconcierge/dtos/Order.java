@@ -18,18 +18,18 @@ import java.util.Locale;
 public class Order implements Parcelable {
     private long orderId;
     private Timestamp orderDate;
-    private Boolean orderAborted;
+    private Boolean orderSuccessful = false;
+    private int numOfRepetitions = 0;
+    private long orderDurationInSeconds = 0L;
     private Timestamp requestedPickUpTime;
     private Timestamp actualPickUpTime;
-    private Boolean isPaid;
+    private Boolean isPaid = false;
     private Timestamp timePaid;
-    private Boolean isFulfilled;
+    private Boolean isFulfilled = false;
     private Timestamp timeFulfilled;
     private double total = 0.00;
     private String customer;
     private List<OrderItem> orderItems = new ArrayList<>();
-
-    public Boolean isOrderComplete = false;
 
     public long getOrderId() {
         return orderId;
@@ -47,12 +47,28 @@ public class Order implements Parcelable {
         this.orderDate = orderDate;
     }
 
-    public Boolean getOrderAborted() {
-        return orderAborted;
+    public Boolean getOrderSuccessful() {
+        return orderSuccessful;
     }
 
-    public void setOrderAborted(Boolean orderAborted) {
-        this.orderAborted = orderAborted;
+    public void setOrderSuccessful(Boolean orderSuccessful) {
+        this.orderSuccessful = orderSuccessful;
+    }
+
+    public int getNumOfRepetitions() {
+        return numOfRepetitions;
+    }
+
+    public void setNumOfRepetitions(Integer numOfRepetitions) {
+        this.numOfRepetitions = numOfRepetitions;
+    }
+
+    public long getOrderDurationInSeconds() {
+        return orderDurationInSeconds;
+    }
+
+    public void setOrderDurationInSeconds(Long orderDurationInSeconds) {
+        this.orderDurationInSeconds = orderDurationInSeconds;
     }
 
     public Timestamp getRequestedPickUpTime() {
@@ -134,10 +150,12 @@ public class Order implements Parcelable {
 
     public Order() {}
 
-    public Order(Long orderId, Timestamp orderDate, Boolean orderAborted, Timestamp requestedPickUpTime, Timestamp actualPickUpTime, Boolean isPaid, Timestamp timePaid, Boolean isFulfilled, Timestamp timeFulfilled, Double total, String customer, List<OrderItem> orderItems) {
+    public Order(Long orderId, Timestamp orderDate, Boolean orderSuccessful, Integer numOfRepetitions, Long orderDurationInSeconds,Timestamp requestedPickUpTime, Timestamp actualPickUpTime, Boolean isPaid, Timestamp timePaid, Boolean isFulfilled, Timestamp timeFulfilled, Double total, String customer, List<OrderItem> orderItems) {
         this.orderId = orderId;
         this.orderDate = orderDate;
-        this.orderAborted = orderAborted;
+        this.orderSuccessful = orderSuccessful;
+        this.numOfRepetitions = numOfRepetitions;
+        this.orderDurationInSeconds = orderDurationInSeconds;
         this.requestedPickUpTime = requestedPickUpTime;
         this.actualPickUpTime = actualPickUpTime;
         this.isPaid = isPaid;
@@ -154,7 +172,9 @@ public class Order implements Parcelable {
         this.orderId = inParcel.readLong();
         longDate = inParcel.readLong();
         this.orderDate = longDate != 0 ? new Timestamp(longDate) : null;
-        this.orderAborted = inParcel.readByte() != 0;
+        this.orderSuccessful = inParcel.readByte() != 0;
+        this.numOfRepetitions = inParcel.readInt();
+        this.orderDurationInSeconds = inParcel.readLong();
         longDate = inParcel.readLong();
         this.requestedPickUpTime = longDate != 0 ? new Timestamp(longDate) : null;
         longDate = inParcel.readLong();
@@ -174,7 +194,9 @@ public class Order implements Parcelable {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH:mm:ss.SSSZ", Locale.ENGLISH);
         try {
             this.orderId = json.getLong("orderId");
-            this.orderAborted = json.getBoolean("orderAborted");
+            this.orderSuccessful = json.getBoolean("orderSuccessful");
+            this.numOfRepetitions = json.getInt("numOfRepetitions");
+            this.orderDurationInSeconds = json.getLong("orderDurationInSeconds");
             this.isPaid = json.getBoolean("isPaid");
             this.isFulfilled = json.getBoolean("isFulfilled");
             this.total = json.getDouble("total");
@@ -210,7 +232,9 @@ public class Order implements Parcelable {
         try {
             json.put("orderId", this.orderId);
             json.put("orderDate", this.orderDate != null ? dateFormat.format(this.orderDate) : JSONObject.NULL);
-            json.put("orderAborted", this.orderAborted);
+            json.put("orderSuccessful", this.orderSuccessful);
+            json.put("numOfRepetitions", this.numOfRepetitions);
+            json.put("orderDurationInSeconds", this.orderDurationInSeconds);
             json.put("requestedPickUpTime", this.requestedPickUpTime != null ? dateFormat.format(this.requestedPickUpTime) : JSONObject.NULL);
             json.put("actualPickUpTime", this.actualPickUpTime != null ? dateFormat.format(this.actualPickUpTime) : JSONObject.NULL);
             json.put("isPaid", this.isPaid);
@@ -245,7 +269,9 @@ public class Order implements Parcelable {
     public void writeToParcel(Parcel outParcel, int flags) {
         outParcel.writeLong(this.orderId);
         outParcel.writeLong(this.orderDate != null ? this.orderDate.getTime() : 0);
-        outParcel.writeByte((byte) (this.orderAborted ? 1 : 0));
+        outParcel.writeByte((byte) (this.orderSuccessful ? 1 : 0));
+        outParcel.writeInt(this.numOfRepetitions);
+        outParcel.writeLong(this.orderDurationInSeconds);
         outParcel.writeLong(this.requestedPickUpTime != null ? this.requestedPickUpTime.getTime() : 0);
         outParcel.writeLong(this.actualPickUpTime != null ? this.actualPickUpTime.getTime() : 0);
         outParcel.writeByte((byte) (this.isPaid ? 1 : 0));

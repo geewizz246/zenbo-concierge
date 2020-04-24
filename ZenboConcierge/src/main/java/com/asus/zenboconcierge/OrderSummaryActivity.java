@@ -125,6 +125,8 @@ public class OrderSummaryActivity extends RobotActivity {
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Declare order a success
+                order.setOrderSuccessful(true);
                 saveOrder();
 
                 isOrderSummaryActive = false;
@@ -143,7 +145,7 @@ public class OrderSummaryActivity extends RobotActivity {
         // Disable finish order button
         btnConfirm.setEnabled(false);
 
-        robotAPI.robot.speak("Okay I received your order. Take a moment to review and select a pickup time.");
+        robotAPI.robot.speak(getString(R.string.zenbo_speak_order_summary));
     }
 
     @Override
@@ -153,13 +155,8 @@ public class OrderSummaryActivity extends RobotActivity {
         isOrderSummaryActive = true;
 
         if (order != null) {
-            if (order.getOrderAborted() && !order.isOrderComplete) {
-                // Assume the order is still being performed
-                order.setOrderAborted(false);
-                Log.d(TAG, "Order " + order.getOrderId() + " not aborted");
-                // Send an update to the server
-                saveOrder();
-            }
+            // Assume the order is still being performed
+            Log.d(TAG, "Order " + order.getOrderId() + " not aborted");
         }
     }
 
@@ -169,13 +166,10 @@ public class OrderSummaryActivity extends RobotActivity {
         Log.d(TAG, TAG + " paused");
 
         if (order != null && isOrderSummaryActive) {
-            if (!order.getOrderAborted() && !order.isOrderComplete) {
-                // Assume the order was aborted
-                order.setOrderAborted(true);
-                Log.d(TAG, "Order " + order.getOrderId() + " aborted");
-                // Send an update to the server
-                saveOrder();
-            }
+            // Assume the order was aborted
+            Log.d(TAG, "Order " + order.getOrderId() + " aborted");
+            // Send an update to the server
+            saveOrder();
         }
     }
 
@@ -225,6 +219,12 @@ public class OrderSummaryActivity extends RobotActivity {
     }
 
     private void saveOrder() {
+        // Get the time when the order was stopped and set new duration
+        final Date now = new Date();
+        long duration = (now.getTime() - order.getOrderDate().getTime()) / 1000;
+        order.setOrderDurationInSeconds(duration);
+        Log.d(TAG, order.toString());
+
         // Disable buttons
         btnSetPickupTime.setEnabled(false);
         btnConfirm.setEnabled(false);

@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.asus.robotframework.API.RobotFace;
+import com.asus.robotframework.API.RobotUtil;
 import com.asus.zenboconcierge.dtos.Customer;
 import com.asus.robotframework.API.RobotCallback;
 import com.asus.robotframework.API.RobotCmdState;
@@ -32,8 +33,9 @@ import cz.msebera.android.httpclient.Header;
 
 public class LoginActivity extends RobotActivity {
     private static final String TAG = "LoginActivity";
-    public final static String DOMAIN = "39F7332D02E04D9FAE24D185B009EE01";
+    public final static String DOMAIN = "4BF19BF00E604E61AC287ED125FB48C7";
     public final static String PLAN = "launchZenboConcierge";
+    private static String STATE_MSG;
 
     private final Context context = LoginActivity.this;
     private String alertMsg = null;
@@ -45,18 +47,22 @@ public class LoginActivity extends RobotActivity {
     public static RobotCallback robotCallback = new RobotCallback() {
         @Override
         public void onResult(int cmd, int serial, RobotErrorCode err_code, Bundle result) {
+            Log.d(TAG, "WOAH from onresult");
             super.onResult(cmd, serial, err_code, result);
         }
 
         @Override
         public void onStateChange(int cmd, int serial, RobotErrorCode err_code, RobotCmdState state) {
+            if (state.getDescription().equals("ROBOT_CMD_STATE_FAILED")) {
+                STATE_MSG = "I cannot access the dialog server!";
+            }
             super.onStateChange(cmd, serial, err_code, state);
         }
 
         @Override
         public void initComplete() {
+            Log.d(TAG, "WOAH from oninit");
             super.initComplete();
-
         }
     };
 
@@ -83,7 +89,21 @@ public class LoginActivity extends RobotActivity {
 
         @Override
         public void onResult(JSONObject jsonObject) {
+            String text;
+            text = "onResult: " + jsonObject.toString();
+            Log.d(TAG, text);
 
+            String sIntentionID = RobotUtil.queryListenResultJson(jsonObject, "IntentionId");
+            Log.d(TAG, "Intention Id = " + sIntentionID);
+
+            if(sIntentionID.equals("loginContext")) {
+                String sSluResultCity = RobotUtil.queryListenResultJson(jsonObject, "myCity1", null);
+                Log.d(TAG, "Result City = " + sSluResultCity);
+
+                if(sSluResultCity!= null) {
+//                    mTextView.setText("You are now at " + sSluResultCity);
+                }
+            }
         }
 
         @Override
@@ -149,7 +169,15 @@ public class LoginActivity extends RobotActivity {
         // Dunno if this works
         robotAPI.robot.jumpToPlan(DOMAIN, PLAN);
 
-//        robotAPI.robot.speak(getString(R.string.zenbo_speak_login_prompt));
+        robotAPI.robot.speak(getString(R.string.zenbo_speak_login_prompt));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (STATE_MSG != null) {
+            robotAPI.robot.speak(STATE_MSG);
+        }
     }
 
     @Override
