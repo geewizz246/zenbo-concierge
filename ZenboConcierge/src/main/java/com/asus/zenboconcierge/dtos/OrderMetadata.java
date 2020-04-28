@@ -16,7 +16,6 @@ public class OrderMetadata implements Parcelable {
     private int numRepetitionsSummary = 0;
     private int numTouchInputs = 0;
     private int numVoiceInputs = 0;
-    private long orderId;
 
     public OrderMetadata() {}
 
@@ -28,7 +27,6 @@ public class OrderMetadata implements Parcelable {
         this.numRepetitionsSummary = numRepetitionsSummary;
         this.numTouchInputs = numTouchInputs;
         this.numVoiceInputs = numVoiceInputs;
-        this.orderId = orderId;
     }
 
     public OrderMetadata(Parcel inParcel) {
@@ -39,7 +37,6 @@ public class OrderMetadata implements Parcelable {
         this.numRepetitionsSummary = inParcel.readInt();
         this.numTouchInputs = inParcel.readInt();
         this.numVoiceInputs = inParcel.readInt();
-        this.orderId = inParcel.readLong();
     }
 
     public OrderMetadata(JSONObject json) {
@@ -51,7 +48,6 @@ public class OrderMetadata implements Parcelable {
             this.numRepetitionsSummary = json.getInt("numRepetitionsSummary");
             this.numTouchInputs = json.getInt("numTouchInputs");
             this.numVoiceInputs = json.getInt("numVoiceInputs");
-            this.orderId = json.getLong("orderId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -113,14 +109,6 @@ public class OrderMetadata implements Parcelable {
         this.numVoiceInputs = numVoiceInputs;
     }
 
-    public long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(long orderId) {
-        this.orderId = orderId;
-    }
-
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         try {
@@ -131,7 +119,6 @@ public class OrderMetadata implements Parcelable {
             json.put("numRepetitionsSummary", this.numRepetitionsSummary);
             json.put("numTouchInputs", this.numTouchInputs);
             json.put("numVoiceInputs", this.numVoiceInputs);
-            json.put("orderId", this.orderId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -159,7 +146,6 @@ public class OrderMetadata implements Parcelable {
         outParcel.writeInt(numRepetitionsSummary);
         outParcel.writeInt(numTouchInputs);
         outParcel.writeInt(numVoiceInputs);
-        outParcel.writeLong(orderId);
     }
 
     public static final Parcelable.Creator<OrderMetadata> CREATOR = new Parcelable.Creator<OrderMetadata>() {
