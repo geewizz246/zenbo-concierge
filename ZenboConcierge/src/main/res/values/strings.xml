@@ -18,7 +18,7 @@
     <string name="order_menu_title">Menu</string>
     <string name="order_preview_title">Cart</string>
     <string name="order_preview_placeholder">Nothing selected yet.</string>
-    <string name="order_preview_total_placeholder">$0.00</string>
+    <string name="order_preview_total_placeholder">$ 0.00</string>
     <string name="order_preview_total_title_placeholder">Total</string>
     <string name="btn_order_checkout_text">Checkout</string>
     <string name="btn_order_cancel_text">Cancel</string>
@@ -28,7 +28,7 @@
     <string name="order_summary_item_price_heading">Price</string>
     <string name="order_summary_item_quantity_heading">Quantity</string>
     <string name="order_summary_item_name_heading">Item Name</string>
-    <string name="order_summary_title">Order Summary</string>
+    <string name="order_summary_title">Checkout</string>
     <string name="order_summary_order_id_placeholder">[order ID]</string>
     <string name="order_summary_order_id_title">Order ID:</string>
     <string name="pickup_time_input_placeholder">Please choose time</string>
@@ -45,8 +45,11 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="zenbo_speak_login_fail">Oh no. Something went wrong. Please try again.</string>
-    <string name="zenbo_speak_menu_greeting">Hello %s. Nice to see you. Select the items you want and checkout when you\'re ready.</string>
-    <string name="zenbo_speak_cancel_warning">Are your sure you want to leave now? If you do, you\'ll lose all progress on your order.</string>
-    <string name="zenbo_speak_order_success">Thank you %s. Your order was created successfully. Hope you enjoy your meal!</string>
+    <string name="zenbo_speak_menu_greeting">Hello %s. Nice to see you. Select the items you want and let me know when you\'re ready to checkout.</string>
+    <string name="zenbo_speak_cancel_warning">Are you sure you want to leave now? If you do, you\'ll lose all progress on your order.</string>
+    <string name="zenbo_speak_order_success">Thank you %s. Your order was created successfully. Pickup is set for %s. Hope you enjoy your meal!</string>
     <string name="zenbo_speak_order_summary">Okay I received your order. Take a moment to review and select a pickup time.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -13,7 +13,9 @@
     <color name="colorGrayLight">#E5E5E5</color>
     <color name="colorGrayMedium">#CACACA</color>
     <color name="colorGraySemiDark">#B0B0B0</color>
-    <color name="colorGrayDark">#272727</color>
+    <color name="colorGrayMostlyDark">#505050</color>
+    <color name="colorGrayDark">#333333</color>
+    <color name="colorGreen">#3FBB5F</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="blue">#4257C2</color>

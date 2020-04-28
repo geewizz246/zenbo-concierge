@@ -48,12 +48,13 @@
                     android:layout_height="0dp"
                     android:layout_gravity="center"
                     android:layout_weight="5"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="0dp"
                     android:text="@string/menu_item_name_default"
-                    android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textColor="#000000"
-                    android:textSize="18sp" />
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/textview_item_price"
@@ -61,12 +62,14 @@
                     android:layout_height="0dp"
                     android:layout_gravity="center"
                     android:layout_weight="5"
-                    android:gravity="center"
+                    android:fontFamily="@font/roboto_light"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="0dp"
                     android:text="@string/menu_item_price_default"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="#368039"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -77,11 +80,11 @@
 
             <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
                 android:id="@+id/number_picker"
-                android:layout_width="150dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                app:backGroundColor="@color/colorPrimary"
-                app:textColor="@color/white" />
+                app:backGroundColor="@color/colorPrimaryLighter"
+                app:textColor="@color/colorGrayDark" />
 
             <Space
                 android:layout_width="0dp"

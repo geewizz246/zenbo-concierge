@@ -1,10 +1,12 @@
 package com.asus.zenboconcierge;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.appcompat.app.AlertDialog;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,6 +34,7 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 
 public class LoginActivity extends RobotActivity {
+    public int currentApiVersion;
     private static final String TAG = "LoginActivity";
     public final static String DOMAIN = "4BF19BF00E604E61AC287ED125FB48C7";
     public final static String PLAN = "launchZenboConcierge";
@@ -122,6 +125,25 @@ public class LoginActivity extends RobotActivity {
         setContentView(R.layout.activity_login);
         Log.d(TAG, TAG + " created");
 
+        // Hide navigation bar
+        currentApiVersion = Build.VERSION.SDK_INT;
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        if (currentApiVersion >= Build.VERSION_CODES.KITKAT) {
+            getWindow().getDecorView().setSystemUiVisibility(flags);
+            final View decorView = getWindow().getDecorView();
+            decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                @Override
+                public void onSystemUiVisibilityChange(int visibility) {
+                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                        decorView.setSystemUiVisibility(flags);
+                    }
+                }
+            });
+        }
+
         // Get views
         editTextEmail = findViewById(R.id.edittext_login_email);
         editTextPin = findViewById(R.id.edittext_login_pin);
@@ -165,9 +187,9 @@ public class LoginActivity extends RobotActivity {
         // Close face
         robotAPI.robot.setExpression(RobotFace.HIDEFACE);
 
-        // Jump to dialog domain plan
-        // Dunno if this works
-        robotAPI.robot.jumpToPlan(DOMAIN, PLAN);
+//        // Jump to dialog domain plan
+//        // Dunno if this works
+//        robotAPI.robot.jumpToPlan(DOMAIN, PLAN);
 
         robotAPI.robot.speak(getString(R.string.zenbo_speak_login_prompt));
     }
@@ -190,6 +212,18 @@ public class LoginActivity extends RobotActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "Application destroyed @" + TAG);
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (currentApiVersion >= Build.VERSION_CODES.KITKAT && hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
     public void onLogin(View view) {
@@ -259,8 +293,6 @@ public class LoginActivity extends RobotActivity {
         Circle circleProgress = new Circle();
         progress.setIndeterminateDrawable(circleProgress);
     }
-
-
 
     // ******************************************************
     // HELPER FUNCTIONS

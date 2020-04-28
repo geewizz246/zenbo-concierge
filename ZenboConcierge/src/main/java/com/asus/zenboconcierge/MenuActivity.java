@@ -1,5 +1,6 @@
 package com.asus.zenboconcierge;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,19 +8,23 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.asus.robotframework.API.RobotCallback;
 import com.asus.robotframework.API.RobotCmdState;
 import com.asus.robotframework.API.RobotErrorCode;
+import com.asus.robotframework.API.SpeakConfig;
 import com.asus.zenboconcierge.dtos.*;
 
 import com.asus.zenboconcierge.utils.FoodItemGridAdapter;
@@ -36,9 +41,9 @@ import org.json.JSONObject;
 import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,12 +53,14 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class MenuActivity extends RobotActivity {
+    private int currentApiVersion;
     private static final String TAG = "MenuActivity";
     private static Boolean isMenuActive = false;
-    private Date orderStart;
 
+    private Date orderStartTime;
     private Customer customer;
     private Order order;
+    private OrderMetadata orderMetadata;
     private final List<FoodItem> foodItemList = new ArrayList<>();
     private final List<OrderItem> orderItemList = new ArrayList<>();
     private final Context context = MenuActivity.this;
@@ -121,18 +128,43 @@ public class MenuActivity extends RobotActivity {
         setContentView(R.layout.activity_menu);
         Log.d(TAG, TAG + " created");
 
-        // Get the intent that started this activity and extract the customer
-        Intent intent = getIntent();
-        customer = intent.getParcelableExtra("customer");
+        // Hide navigation bar
+        currentApiVersion = Build.VERSION.SDK_INT;
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        if (currentApiVersion >= Build.VERSION_CODES.KITKAT) {
+            getWindow().getDecorView().setSystemUiVisibility(flags);
+            final View decorView = getWindow().getDecorView();
+            decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                @Override
+                public void onSystemUiVisibilityChange(int visibility) {
+                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                        decorView.setSystemUiVisibility(flags);
+                    }
+                }
+            });
+        }
+
+        // Set ActionBar
+        Toolbar actionBar = findViewById(R.id.action_bar);
+        setActionBar(actionBar);
+
+        // Get customer passed from login screen
+        Intent loginIntent = getIntent();
+        customer = loginIntent.getParcelableExtra("customer");
 
         setUpMenuAndOrder();
         registerButtons();
 
-        // Disable the checkout button
+        // Disable checkout button until items are selected
         btnCheckout.setEnabled(false);
 
-        // Zenbo Greeting
-        robotAPI.robot.speak(String.format(getString(R.string.zenbo_speak_menu_greeting), customer.getFirstName()));
+        // Greet user; wait for them select items, or say "Checkout" or "Cancel"
+        SpeakConfig speakConfig = new SpeakConfig();
+        speakConfig.timeout(30);    // 30s
+        robotAPI.robot.speakAndListen(String.format(getString(R.string.zenbo_speak_menu_greeting), customer.getFirstName()), speakConfig);
     }
 
     @Override
@@ -183,14 +215,34 @@ public class MenuActivity extends RobotActivity {
         Log.d(TAG, "Application destroyed @" + TAG);
     }
 
+    @SuppressLint("NewApi")
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (currentApiVersion >= Build.VERSION_CODES.KITKAT && hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+
     @Override
     public void onBackPressed() {
         cancelOrder();
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            orderMetadata.setNumTouchInputs(orderMetadata.getNumTouchInputs() + 1);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
     private void setUpMenuAndOrder() {
         // Get food items
-        HttpUtils.get("items", new RequestParams(), new JsonHttpResponseHandler() {
+        HttpUtils.get("items/available", new RequestParams(), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 try {
@@ -220,23 +272,22 @@ public class MenuActivity extends RobotActivity {
         });
 
         // Initialise the order
-        JSONObject orderParams = new JSONObject();
-        StringEntity orderEntity = null;
-        orderStart = new Date();
+        orderStartTime = new Date();
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH:mm:ss.SSSZ", Locale.ENGLISH);
-        try {
-            orderParams.put("requestedPickUpTime", dateFormat.format(orderStart));
-            orderParams.put("orderDate", dateFormat.format(orderStart));
-            orderParams.put("numOfRepetitions", 0);
-            JSONObject jsonCust = new JSONObject();
-            jsonCust.put("email", customer.getEmail());
-            orderParams.put("customer", jsonCust);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
+        Order initOrder = new Order();
+        initOrder.setOrderDate(new Timestamp(orderStartTime.getTime()));
+        initOrder.setRequestedPickUpTime(new Timestamp(orderStartTime.getTime()));
+        initOrder.setCustomer(customer.getEmail());
+        orderMetadata = new OrderMetadata();
+        initOrder.setOrderMetadata(orderMetadata);
+
+        Log.d(TAG, initOrder.toString());
+
+        StringEntity orderEntity = null;
 
         try {
-            orderEntity  = new StringEntity(orderParams.toString());
+            orderEntity  = new StringEntity(initOrder.toString());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -245,6 +296,7 @@ public class MenuActivity extends RobotActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 order = new Order(response);
+                orderMetadata = order.getOrderMetadata();
                 Log.d(TAG, order.toString());
             }
 
@@ -307,8 +359,9 @@ public class MenuActivity extends RobotActivity {
     private void saveOrder() {
         // Get the time when the order was stopped and set new duration
         final Date now = new Date();
-        long duration = (now.getTime() - orderStart.getTime()) / 1000;
-        order.setOrderDurationInSeconds(duration);
+        long duration = (now.getTime() - orderStartTime.getTime()) / 1000;
+        orderMetadata.setOrderDurationInSeconds(duration);
+        order.setOrderMetadata(orderMetadata);
         Log.d(TAG, order.toString());
 
         // Disable buttons to prevent double submission

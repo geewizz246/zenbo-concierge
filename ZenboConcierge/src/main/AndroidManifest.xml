@@ -11,13 +11,15 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:replace="android:theme">
 
         <meta-data android:name="zenbo_ds_domainuuid" android:value="4BF19BF00E604E61AC287ED125FB48C7"/>
         <meta-data android:name="zenbo_ds_version_4BF19BF00E604E61AC287ED125FB48C7" android:value="0.0.1"/>
 
-        <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <activity
             android:name=".LoginActivity"

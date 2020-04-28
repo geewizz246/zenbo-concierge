@@ -1,7 +1,9 @@
 package com.asus.zenboconcierge;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +21,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 
 public class OrderSuccessActivity extends RobotActivity {
+    private int currentApiVersion;
     private static final String TAG = "OrderSuccessActivity";
 
     private Customer customer;
@@ -84,6 +87,25 @@ public class OrderSuccessActivity extends RobotActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_success);
 
+        // Hide navigation bar
+        currentApiVersion = Build.VERSION.SDK_INT;
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        if (currentApiVersion >= Build.VERSION_CODES.KITKAT) {
+            getWindow().getDecorView().setSystemUiVisibility(flags);
+            final View decorView = getWindow().getDecorView();
+            decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                @Override
+                public void onSystemUiVisibilityChange(int visibility) {
+                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                        decorView.setSystemUiVisibility(flags);
+                    }
+                }
+            });
+        }
+
         Intent intent = getIntent();
         customer = intent.getParcelableExtra("customer");
         order = intent.getParcelableExtra("order");
@@ -103,7 +125,8 @@ public class OrderSuccessActivity extends RobotActivity {
             }
         });
 
-        robotAPI.robot.speak(String.format(getString(R.string.zenbo_speak_order_success), customer.getFirstName()));
+        String orderTime = new SimpleDateFormat("hh:mm a").format(order.getRequestedPickUpTime());
+        robotAPI.robot.speak(String.format(getString(R.string.zenbo_speak_order_success), customer.getFirstName(), orderTime));
     }
 
     @Override
@@ -128,5 +151,17 @@ public class OrderSuccessActivity extends RobotActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "Application destroyed @" + TAG);
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (currentApiVersion >= Build.VERSION_CODES.KITKAT && hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 }

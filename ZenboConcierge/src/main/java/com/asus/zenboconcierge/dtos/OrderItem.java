@@ -3,19 +3,21 @@ package com.asus.zenboconcierge.dtos;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
 
 public class OrderItem implements Parcelable{
-    private Long orderId;
+    private long orderId;
     private FoodItem foodItem;
     private int quantityOrdered = 1;
 
     public OrderItem() {}
 
-    public OrderItem(Long orderId, FoodItem foodItem, Integer quantityOrdered) {
+    public OrderItem(long orderId, FoodItem foodItem, int quantityOrdered) {
         this.orderId = orderId;
         this.foodItem = foodItem;
         this.quantityOrdered = quantityOrdered;
@@ -37,11 +39,11 @@ public class OrderItem implements Parcelable{
         }
     }
 
-    public Long getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
@@ -57,7 +59,7 @@ public class OrderItem implements Parcelable{
         return quantityOrdered;
     }
 
-    public void setQuantityOrdered(Integer quantityOrdered) {
+    public void setQuantityOrdered(int quantityOrdered) {
         this.quantityOrdered = quantityOrdered;
     }
 
@@ -65,9 +67,9 @@ public class OrderItem implements Parcelable{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrderItem orderItem = (OrderItem) o;
-        return this.orderId.equals(orderItem.orderId) &&
-                this.foodItem.getItemId().equals(orderItem.foodItem.getItemId());
+        OrderItem that = (OrderItem) o;
+        return this.orderId == that.orderId &&
+                this.foodItem.getItemId().equals(that.foodItem.getItemId());
     }
 
     @Override
@@ -80,7 +82,7 @@ public class OrderItem implements Parcelable{
 
         try {
             json.put("orderId", this.orderId);
-            json.put("itemId", this.foodItem.getItemId());
+            json.put("foodItem", this.foodItem.toJson());
             json.put("quantityOrdered", this.quantityOrdered);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -89,6 +91,7 @@ public class OrderItem implements Parcelable{
         return json;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return this.toJson().toString();

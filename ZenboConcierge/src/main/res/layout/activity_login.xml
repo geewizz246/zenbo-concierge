@@ -4,36 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorGrayLight"
     android:orientation="vertical"
-    android:weightSum="100"
+    android:weightSum="10"
     tools:context=".LoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="50"
-        android:background="@color/colorGrayDark"
+        android:layout_weight="5"
+        android:background="@color/black"
+        android:gravity="center"
         android:orientation="vertical"
         android:weightSum="10">
 
         <ImageView
-            android:layout_width="200dp"
-            android:layout_height="125dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
             android:src="@drawable/clipart_robot" />
 
         <TextView
-            android:id="@+id/textview_login_heading"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:gravity="top"
+            android:gravity="center"
             android:text="@string/login_heading"
             android:textColor="@color/white"
             android:textSize="40sp"
             android:textStyle="bold" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3" />
 
     </LinearLayout>
 
@@ -41,14 +45,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_marginStart="30dp"
         android:layout_marginTop="-100dp"
-        android:layout_marginEnd="30dp"
-        android:layout_weight="55"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_weight="5.5"
+        android:background="@color/white"
         app:cardCornerRadius="10dp"
-        app:cardElevation="5dp"
-        app:contentPaddingLeft="20dp"
-        app:contentPaddingRight="20dp">
+        app:cardElevation="5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -60,14 +63,15 @@
                 android:id="@+id/textview_login_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:text="@string/login_title"
                 android:textColor="@color/black"
-                android:textSize="26sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.1" />
 
             <TextView
                 android:id="@+id/textview_login_email_label"
@@ -76,7 +80,7 @@
                 android:layout_marginTop="30dp"
                 android:labelFor="@+id/edittext_login_email"
                 android:text="@string/label_email"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/edittext_login_email"
                 app:layout_constraintTop_toBottomOf="@+id/textview_login_title" />
@@ -85,7 +89,6 @@
                 android:id="@+id/edittext_login_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:ems="12"
                 android:importantForAutofill="no"
                 android:inputType="textEmailAddress"
@@ -101,7 +104,7 @@
                 android:layout_marginTop="16dp"
                 android:labelFor="@+id/edittext_login_pin"
                 android:text="@string/label_pin"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/edittext_login_pin"
                 app:layout_constraintTop_toBottomOf="@+id/edittext_login_email" />
@@ -120,23 +123,24 @@
 
             <Button
                 android:id="@+id/btn_login"
-                android:layout_width="match_parent"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="48dp"
-                android:layout_marginEnd="40dp"
                 android:background="@drawable/btn_style_1"
                 android:onClick="onLogin"
                 android:paddingStart="24sp"
+                android:paddingTop="8dp"
                 android:paddingEnd="24sp"
+                android:paddingBottom="8dp"
                 android:text="@string/btn_login"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                android:textColor="#FFFFFF"
-                android:textSize="30sp"
+                android:textColor="@color/white"
+                android:textSize="24sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edittext_login_pin" />
+                app:layout_constraintTop_toBottomOf="@+id/edittext_login_pin"
+                app:layout_constraintVertical_bias="0.3" />
 
             <com.github.ybq.android.spinkit.SpinKitView
                 android:id="@+id/progress"
@@ -144,7 +148,7 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="65dp"
+                android:layout_marginTop="75dp"
                 android:visibility="gone"
                 app:SpinKit_Color="@color/colorAccent"
                 app:layout_constraintEnd_toEndOf="parent"

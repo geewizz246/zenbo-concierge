@@ -69,8 +69,8 @@ public class OrderSummaryListAdapter extends ArrayAdapter<OrderItem> {
         convertView.setTag(holder);
 
         holder.textViewItemName.setText(item.getFoodItem().getName());
-        holder.textViewItemPrice.setText(String.format("@   $ %.2f", item.getFoodItem().getPrice()));
-        holder.textViewItemQuantity.setText(String.format("x %d", item.getQuantityOrdered()));
+        holder.textViewItemPrice.setText(String.format("@  $ %.2f", item.getFoodItem().getPrice()));
+        holder.textViewItemQuantity.setText(String.format("%d", item.getQuantityOrdered()));
         holder.textViewItemSubTotal.setText(String.format("$ %.2f", item.getQuantityOrdered() * item.getFoodItem().getPrice()));
 
         return convertView;

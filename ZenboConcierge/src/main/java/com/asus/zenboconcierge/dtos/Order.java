@@ -3,6 +3,8 @@ package com.asus.zenboconcierge.dtos;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,8 +21,6 @@ public class Order implements Parcelable {
     private long orderId;
     private Timestamp orderDate;
     private Boolean orderSuccessful = false;
-    private int numOfRepetitions = 0;
-    private long orderDurationInSeconds = 0L;
     private Timestamp requestedPickUpTime;
     private Timestamp actualPickUpTime;
     private Boolean isPaid = false;
@@ -30,12 +30,87 @@ public class Order implements Parcelable {
     private double total = 0.00;
     private String customer;
     private List<OrderItem> orderItems = new ArrayList<>();
+    private OrderMetadata orderMetadata;
+
+    public Order() {}
+
+    public Order(long orderId, Timestamp orderDate, Boolean orderSuccessful, Timestamp requestedPickUpTime, Timestamp actualPickUpTime, Boolean isPaid, Timestamp timePaid, Boolean isFulfilled, Timestamp timeFulfilled, double total, String customer, List<OrderItem> orderItems, OrderMetadata orderMetadata) {
+        this.orderId = orderId;
+        this.orderDate = orderDate;
+        this.orderSuccessful = orderSuccessful;
+        this.requestedPickUpTime = requestedPickUpTime;
+        this.actualPickUpTime = actualPickUpTime;
+        this.isPaid = isPaid;
+        this.timePaid = timePaid;
+        this.isFulfilled = isFulfilled;
+        this.timeFulfilled = timeFulfilled;
+        this.total = total;
+        this.customer = customer;
+        this.orderItems = orderItems;
+        this.orderMetadata = orderMetadata;
+    }
+
+    public Order(Parcel inParcel) {
+        long longDate;
+        this.orderId = inParcel.readLong();
+        longDate = inParcel.readLong();
+        this.orderDate = longDate != 0 ? new Timestamp(longDate) : null;
+        this.orderSuccessful = inParcel.readByte() != 0;
+        longDate = inParcel.readLong();
+        this.requestedPickUpTime = longDate != 0 ? new Timestamp(longDate) : null;
+        longDate = inParcel.readLong();
+        this.actualPickUpTime = longDate != 0 ? new Timestamp(longDate) : null;
+        this.isPaid = inParcel.readByte() != 0;
+        longDate = inParcel.readLong();
+        this.timePaid = longDate != 0 ? new Timestamp(longDate) : null;
+        this.isFulfilled = inParcel.readByte() != 0;
+        longDate = inParcel.readLong();
+        this.timeFulfilled = longDate != 0 ? new Timestamp(longDate) : null;
+        this.total = inParcel.readDouble();
+        this.customer = inParcel.readString();
+        inParcel.readTypedList(this.orderItems, OrderItem.CREATOR);
+        this.orderMetadata = inParcel.readParcelable(OrderMetadata.class.getClassLoader());
+    }
+    
+    public Order(JSONObject json) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH:mm:ss.SSSZ", Locale.ENGLISH);
+        try {
+            this.orderId = json.getLong("orderId");
+            this.orderSuccessful = json.getBoolean("orderSuccessful");
+            this.isPaid = json.getBoolean("isPaid");
+            this.isFulfilled = json.getBoolean("isFulfilled");
+            this.total = json.getDouble("total");
+            this.customer = json.getString("customer");
+            this.orderMetadata = new OrderMetadata(json.getJSONObject("orderMetadata"));
+
+            // Handle dates
+            String orderDate = json.getString("orderDate"),
+                    requestedPickUpTime = json.getString("requestedPickUpTime"),
+                    actualPickUpTime = json.getString("actualPickUpTime"),
+                    timePaid = json.getString("timePaid"),
+                    timeFulfilled = json.getString("timeFulfilled");
+
+            this.orderDate = !orderDate.equals("null") ? new Timestamp(dateFormat.parse(orderDate).getTime()) : null;
+            this.requestedPickUpTime = !requestedPickUpTime.equals("null") ? new Timestamp(dateFormat.parse(requestedPickUpTime).getTime()) : null;
+            this.actualPickUpTime = !actualPickUpTime.equals("null") ? new Timestamp(dateFormat.parse(actualPickUpTime).getTime()) : null;
+            this.timePaid = !timePaid.equals("null") ? new Timestamp(dateFormat.parse(timePaid).getTime()) : null;
+            this.timeFulfilled = !timeFulfilled.equals("null") ? new Timestamp(dateFormat.parse(timeFulfilled).getTime()) : null;
+
+            JSONArray orderItems = json.getJSONArray("orderItems");
+            for (int i = 0; i < orderItems.length(); i++) {
+
+                this.orderItems.add(new OrderItem(orderItems.getJSONObject(i)));
+            }
+        } catch (JSONException | ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
     public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
@@ -53,22 +128,6 @@ public class Order implements Parcelable {
 
     public void setOrderSuccessful(Boolean orderSuccessful) {
         this.orderSuccessful = orderSuccessful;
-    }
-
-    public int getNumOfRepetitions() {
-        return numOfRepetitions;
-    }
-
-    public void setNumOfRepetitions(Integer numOfRepetitions) {
-        this.numOfRepetitions = numOfRepetitions;
-    }
-
-    public long getOrderDurationInSeconds() {
-        return orderDurationInSeconds;
-    }
-
-    public void setOrderDurationInSeconds(Long orderDurationInSeconds) {
-        this.orderDurationInSeconds = orderDurationInSeconds;
     }
 
     public Timestamp getRequestedPickUpTime() {
@@ -123,7 +182,7 @@ public class Order implements Parcelable {
         return total;
     }
 
-    public void setTotal(Double total) {
+    public void setTotal(double total) {
         this.total = total;
     }
 
@@ -142,87 +201,18 @@ public class Order implements Parcelable {
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
 
-        this.total = 0.00;
-        for (OrderItem item : orderItems) {
-            this.total += item.getFoodItem().getPrice() * item.getQuantityOrdered();
+        this.total = 0;
+        for (OrderItem orderItem : this.orderItems) {
+            this.total += orderItem.getQuantityOrdered() * orderItem.getFoodItem().getPrice();
         }
     }
 
-    public Order() {}
-
-    public Order(Long orderId, Timestamp orderDate, Boolean orderSuccessful, Integer numOfRepetitions, Long orderDurationInSeconds,Timestamp requestedPickUpTime, Timestamp actualPickUpTime, Boolean isPaid, Timestamp timePaid, Boolean isFulfilled, Timestamp timeFulfilled, Double total, String customer, List<OrderItem> orderItems) {
-        this.orderId = orderId;
-        this.orderDate = orderDate;
-        this.orderSuccessful = orderSuccessful;
-        this.numOfRepetitions = numOfRepetitions;
-        this.orderDurationInSeconds = orderDurationInSeconds;
-        this.requestedPickUpTime = requestedPickUpTime;
-        this.actualPickUpTime = actualPickUpTime;
-        this.isPaid = isPaid;
-        this.timePaid = timePaid;
-        this.isFulfilled = isFulfilled;
-        this.timeFulfilled = timeFulfilled;
-        this.total = total;
-        this.customer = customer;
-        this.orderItems = orderItems;
+    public OrderMetadata getOrderMetadata() {
+        return orderMetadata;
     }
 
-    public Order(Parcel inParcel) {
-        Long longDate = null;
-        this.orderId = inParcel.readLong();
-        longDate = inParcel.readLong();
-        this.orderDate = longDate != 0 ? new Timestamp(longDate) : null;
-        this.orderSuccessful = inParcel.readByte() != 0;
-        this.numOfRepetitions = inParcel.readInt();
-        this.orderDurationInSeconds = inParcel.readLong();
-        longDate = inParcel.readLong();
-        this.requestedPickUpTime = longDate != 0 ? new Timestamp(longDate) : null;
-        longDate = inParcel.readLong();
-        this.actualPickUpTime = longDate != 0 ? new Timestamp(longDate) : null;
-        this.isPaid = inParcel.readByte() != 0;
-        longDate = inParcel.readLong();
-        this.timePaid = longDate != 0 ? new Timestamp(longDate) : null;
-        this.isFulfilled = inParcel.readByte() != 0;
-        longDate = inParcel.readLong();
-        this.timeFulfilled = longDate != 0 ? new Timestamp(longDate) : null;
-        this.total = inParcel.readDouble();
-        this.customer = inParcel.readString();
-        inParcel.readTypedList(this.orderItems, OrderItem.CREATOR);
-    }
-    
-    public Order(JSONObject json) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd@HH:mm:ss.SSSZ", Locale.ENGLISH);
-        try {
-            this.orderId = json.getLong("orderId");
-            this.orderSuccessful = json.getBoolean("orderSuccessful");
-            this.numOfRepetitions = json.getInt("numOfRepetitions");
-            this.orderDurationInSeconds = json.getLong("orderDurationInSeconds");
-            this.isPaid = json.getBoolean("isPaid");
-            this.isFulfilled = json.getBoolean("isFulfilled");
-            this.total = json.getDouble("total");
-            this.customer = json.getString("customer");
-
-            // Handle dates
-            String orderDate = json.getString("orderDate"),
-                    requestedPickUpTime = json.getString("requestedPickUpTime"),
-                    actualPickUpTime = json.getString("actualPickUpTime"),
-                    timePaid = json.getString("timePaid"),
-                    timeFulfilled = json.getString("timeFulfilled");
-
-            this.orderDate = !orderDate.equals("null") ? new Timestamp(dateFormat.parse(orderDate).getTime()) : null;
-            this.requestedPickUpTime = !requestedPickUpTime.equals("null") ? new Timestamp(dateFormat.parse(requestedPickUpTime).getTime()) : null;
-            this.actualPickUpTime = !actualPickUpTime.equals("null") ? new Timestamp(dateFormat.parse(actualPickUpTime).getTime()) : null;
-            this.timePaid = !timePaid.equals("null") ? new Timestamp(dateFormat.parse(timePaid).getTime()) : null;
-            this.timeFulfilled = !timeFulfilled.equals("null") ? new Timestamp(dateFormat.parse(timeFulfilled).getTime()) : null;
-
-            JSONArray orderItems = json.getJSONArray("orderItems");
-            for (int i = 0; i < orderItems.length(); i++) {
-
-                this.orderItems.add(new OrderItem(orderItems.getJSONObject(i)));
-            }
-        } catch (JSONException | ParseException e) {
-            e.printStackTrace();
-        }
+    public void setOrderMetadata(OrderMetadata orderMetadata) {
+        this.orderMetadata = orderMetadata;
     }
 
     public JSONObject toJson() {
@@ -233,8 +223,6 @@ public class Order implements Parcelable {
             json.put("orderId", this.orderId);
             json.put("orderDate", this.orderDate != null ? dateFormat.format(this.orderDate) : JSONObject.NULL);
             json.put("orderSuccessful", this.orderSuccessful);
-            json.put("numOfRepetitions", this.numOfRepetitions);
-            json.put("orderDurationInSeconds", this.orderDurationInSeconds);
             json.put("requestedPickUpTime", this.requestedPickUpTime != null ? dateFormat.format(this.requestedPickUpTime) : JSONObject.NULL);
             json.put("actualPickUpTime", this.actualPickUpTime != null ? dateFormat.format(this.actualPickUpTime) : JSONObject.NULL);
             json.put("isPaid", this.isPaid);
@@ -243,6 +231,7 @@ public class Order implements Parcelable {
             json.put("timeFulfilled", this.timeFulfilled != null ? dateFormat.format(this.timeFulfilled) : JSONObject.NULL);
             json.put("total", this.total);
             json.put("customer", this.customer);
+            json.put("orderMetadata", this.orderMetadata.toJson());
 
             // Handle orderItems
             JSONArray orderItems = new JSONArray();
@@ -255,6 +244,7 @@ public class Order implements Parcelable {
         return json;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return this.toJson().toString();
@@ -270,8 +260,6 @@ public class Order implements Parcelable {
         outParcel.writeLong(this.orderId);
         outParcel.writeLong(this.orderDate != null ? this.orderDate.getTime() : 0);
         outParcel.writeByte((byte) (this.orderSuccessful ? 1 : 0));
-        outParcel.writeInt(this.numOfRepetitions);
-        outParcel.writeLong(this.orderDurationInSeconds);
         outParcel.writeLong(this.requestedPickUpTime != null ? this.requestedPickUpTime.getTime() : 0);
         outParcel.writeLong(this.actualPickUpTime != null ? this.actualPickUpTime.getTime() : 0);
         outParcel.writeByte((byte) (this.isPaid ? 1 : 0));
@@ -281,6 +269,7 @@ public class Order implements Parcelable {
         outParcel.writeDouble(this.total);
         outParcel.writeString(this.customer);
         outParcel.writeTypedList(this.orderItems);
+        outParcel.writeParcelable(this.orderMetadata, flags);
     }
 
     public static final Parcelable.Creator<Order> CREATOR = new Parcelable.Creator<Order>() {
