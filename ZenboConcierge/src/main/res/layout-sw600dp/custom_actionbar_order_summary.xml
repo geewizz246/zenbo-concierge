@@ -3,37 +3,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorGrayDark"
-    android:elevation="10dp">
+    android:background="@color/transparent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginVertical="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingVertical="14dp">
 
-        <ImageButton
-            android:id="@+id/btn_back_to_menu"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="70dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:background="@color/transparent"
-            android:elevation="5dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/back_arrow" />
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/btn_back_to_menu"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:background="@color/transparent"
+                android:elevation="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/back_arrow"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/textview_order_summary_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
+            android:fontFamily="@font/roboto"
             android:gravity="center_vertical"
-            android:paddingStart="40dp"
+            android:paddingStart="20dp"
             android:paddingEnd="0dp"
             android:text="@string/order_summary_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@color/white"
-            android:textSize="36sp"
+            android:textColor="@color/colorGrayDark"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
     </LinearLayout>

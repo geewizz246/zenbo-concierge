@@ -32,13 +32,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:paddingTop="10sp"
             android:text="CONGRATULATIONS"
             android:textColor="@color/colorPrimary"
             android:textSize="60sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10" />
 
         <TextView
             android:id="@+id/textview_order_success_subtitle"

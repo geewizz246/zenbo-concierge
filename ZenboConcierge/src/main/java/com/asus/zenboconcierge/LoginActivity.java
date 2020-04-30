@@ -92,21 +92,21 @@ public class LoginActivity extends RobotActivity {
 
         @Override
         public void onResult(JSONObject jsonObject) {
-            String text;
-            text = "onResult: " + jsonObject.toString();
-            Log.d(TAG, text);
-
-            String sIntentionID = RobotUtil.queryListenResultJson(jsonObject, "IntentionId");
-            Log.d(TAG, "Intention Id = " + sIntentionID);
-
-            if(sIntentionID.equals("loginContext")) {
-                String sSluResultCity = RobotUtil.queryListenResultJson(jsonObject, "myCity1", null);
-                Log.d(TAG, "Result City = " + sSluResultCity);
-
-                if(sSluResultCity!= null) {
+//            String text;
+//            text = "onResult: " + jsonObject.toString();
+//            Log.d(TAG, text);
+//
+//            String sIntentionID = RobotUtil.queryListenResultJson(jsonObject, "IntentionId");
+//            Log.d(TAG, "Intention Id = " + sIntentionID);
+//
+//            if(sIntentionID.equals("loginContext")) {
+//                String sSluResultCity = RobotUtil.queryListenResultJson(jsonObject, "myCity1", null);
+//                Log.d(TAG, "Result City = " + sSluResultCity);
+//
+//                if(sSluResultCity!= null) {
 //                    mTextView.setText("You are now at " + sSluResultCity);
-                }
-            }
+//                }
+//            }
         }
 
         @Override
@@ -189,7 +189,7 @@ public class LoginActivity extends RobotActivity {
 
 //        // Jump to dialog domain plan
 //        // Dunno if this works
-//        robotAPI.robot.jumpToPlan(DOMAIN, PLAN);
+        robotAPI.robot.jumpToPlan(DOMAIN, PLAN);
 
         robotAPI.robot.speak(getString(R.string.zenbo_speak_login_prompt));
     }

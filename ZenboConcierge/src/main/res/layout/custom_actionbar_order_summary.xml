@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorGrayDark"
     android:elevation="10dp">
 
     <LinearLayout
@@ -31,7 +30,7 @@
             android:paddingEnd="0dp"
             android:text="@string/order_summary_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@color/white"
+            android:textColor="@color/colorGrayDark"
             android:textSize="36sp"
             android:textStyle="bold" />
 

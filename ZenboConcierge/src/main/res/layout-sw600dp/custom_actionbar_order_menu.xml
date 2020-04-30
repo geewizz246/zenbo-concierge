@@ -2,13 +2,13 @@
 <Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorGrayDark"
-    android:elevation="10dp">
+    android:elevation="30dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
+        android:paddingVertical="14dp"
         android:weightSum="100">
 
         <TextView
@@ -16,12 +16,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="55"
-            android:fontFamily="sans-serif"
+            android:fontFamily="@font/roboto"
             android:gravity="center_vertical"
+            android:paddingStart="28dp"
+            android:paddingEnd="0dp"
             android:text="@string/order_menu_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@color/white"
-            android:textSize="36sp"
+            android:textColor="@color/colorGrayDark"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <TextView
@@ -29,12 +31,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="45"
-            android:fontFamily="sans-serif"
+            android:fontFamily="@font/roboto"
             android:gravity="center_vertical"
+            android:paddingStart="42dp"
+            android:paddingEnd="0dp"
             android:text="@string/order_preview_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@color/white"
-            android:textSize="36sp"
+            android:textColor="@color/colorGrayDark"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
     </LinearLayout>

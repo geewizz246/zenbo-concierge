@@ -66,6 +66,7 @@ public class MenuActivity extends RobotActivity {
     private final Context context = MenuActivity.this;
     private String alertMsg = null;
 
+    private ListView listViewOrderPreview;
     private AlertDialog alertDialog;
     private Button btnCheckout;
     private Button btnCancel;
@@ -338,9 +339,8 @@ public class MenuActivity extends RobotActivity {
     }
 
     private void setUpOrderPreviewListView() {
-        ListView listViewOrderPreview = findViewById(R.id.listview_order_preview);
+        listViewOrderPreview = findViewById(R.id.listview_order_preview);
         listViewOrderPreview.setVisibility(View.VISIBLE);
-        findViewById(R.id.textview_order_preview_placeholder).setVisibility(View.GONE);
 
         final OrderPreviewListAdapter adapter = new OrderPreviewListAdapter(MenuActivity.this, R.layout.list_item_order_preview, orderItemList);
         listViewOrderPreview.setAdapter(adapter);
@@ -348,6 +348,15 @@ public class MenuActivity extends RobotActivity {
 
     public void updateOrder() {
         order.setOrderItems(orderItemList);
+
+        TextView textViewOrderPreviewPlaceholder = findViewById(R.id.textview_order_preview_placeholder);
+        if (order.getOrderItems().size() > 0 && textViewOrderPreviewPlaceholder.getVisibility() == View.VISIBLE) {
+            textViewOrderPreviewPlaceholder.setVisibility(View.GONE);
+            listViewOrderPreview.setVisibility(View.VISIBLE);
+        } else if (order.getOrderItems().size() == 0 && textViewOrderPreviewPlaceholder.getVisibility() == View.GONE) {
+            textViewOrderPreviewPlaceholder.setVisibility(View.VISIBLE);
+            listViewOrderPreview.setVisibility(View.GONE);
+        }
 
         // Update total
         TextView textViewTotal = findViewById(R.id.textview_order_preview_total);

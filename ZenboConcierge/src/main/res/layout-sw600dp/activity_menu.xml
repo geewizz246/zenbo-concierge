@@ -5,6 +5,7 @@
     android:id="@+id/activity_menu"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".MenuActivity">
 
     <include
@@ -23,16 +24,27 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:columnWidth="150dp"
+        android:elevation="20dp"
         android:gravity="center"
         android:horizontalSpacing="8dp"
         android:numColumns="3"
         android:paddingVertical="4dp"
         android:stretchMode="spacingWidthUniform"
-        android:verticalSpacing="12dp"
+        android:verticalSpacing="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline_order_menu"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/action_bar" />
+
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorGrayLighter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline_order_menu"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -48,10 +60,10 @@
             android:id="@+id/listview_order_preview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:paddingHorizontal="8dp"
             android:layout_weight="80"
             android:divider="@null"
-            android:dividerHeight="4dp"
-            android:paddingVertical="4dp"
+            android:dividerHeight="0dp"
             android:visibility="gone" />
 
         <TextView
@@ -65,14 +77,15 @@
             android:textSize="30sp"
             android:visibility="visible" />
 
-        <View style="@style/Divider" />
+        <!--        <View style="@style/Divider" />-->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="7.5"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp">
+            android:background="@color/colorGrayLight"
+            android:elevation="20dp"
+            android:paddingHorizontal="12dp">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_order_total"
@@ -114,6 +127,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="12.5"
+            android:background="@color/colorGrayLight"
+            android:elevation="20dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingStart="10dp"
@@ -125,9 +140,8 @@
                 android:id="@+id/btn_order_cancel"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/btn_style_3"
-                android:paddingTop="15dp"
-                android:paddingBottom="15dp"
+                android:background="@drawable/btn_style_1"
+                android:paddingVertical="15dp"
                 android:text="@string/btn_order_cancel_text"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/white"
@@ -139,9 +153,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="0dp"
-                android:background="@drawable/btn_style_3"
-                android:paddingTop="15dp"
-                android:paddingBottom="15dp"
+                android:background="@drawable/btn_style_1"
+                android:paddingVertical="15dp"
                 android:text="@string/btn_order_checkout_text"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/white"

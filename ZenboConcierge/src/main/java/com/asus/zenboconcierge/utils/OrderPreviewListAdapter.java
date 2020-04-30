@@ -77,7 +77,7 @@ public class OrderPreviewListAdapter extends ArrayAdapter<OrderItem> {
         convertView.setTag(holder);
 
         holder.textViewItemName.setText(item.getFoodItem().getName());
-        holder.textViewItemPrice.setText(String.format("$%.2f", item.getFoodItem().getPrice()));
+        holder.textViewItemPrice.setText(String.format("$ %.2f", item.getFoodItem().getPrice()));
 //        holder.imgViewItemImg.setImageBitmap(image);
 
         // Set up NumberPicker

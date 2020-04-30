@@ -30,8 +30,10 @@
     <string name="order_summary_item_name_heading">Item Name</string>
     <string name="order_summary_title">Checkout</string>
     <string name="order_summary_order_id_placeholder">[order ID]</string>
-    <string name="order_summary_order_id_title">Order ID:</string>
-    <string name="pickup_time_input_placeholder">Please choose time</string>
+    <string name="order_summary_order_id_title">Order ID</string>
+    <string name="order_summary_order_date_title">Date</string>
+    <string name="pickup_time_input_placeholder">No pickup time selected</string>
+    <string name="btn_pickup_time_input">Select time</string>
     <string name="login_title">WELCOME</string>
     <string name="hint_email">Enter UWI email</string>
     <string name="hint_pin">Enter 4-digit PIN</string>

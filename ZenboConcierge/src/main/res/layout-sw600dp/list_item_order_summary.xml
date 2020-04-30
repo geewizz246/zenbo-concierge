@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
-    tools:context=".MenuActivity">
+    android:layout_height="120dp"
+    tools:context=".OrderSummaryActivity">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="10dp"
         app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
+            android:paddingVertical="10dp"
             android:weightSum="100">
 
             <Space
@@ -32,16 +35,16 @@
                 android:id="@+id/textview_order_summary_item_quantity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="8"
                 android:layout_gravity="center"
+                android:layout_weight="8"
+                android:background="@drawable/border_v2"
                 android:gravity="center"
                 android:paddingStart="10sp"
                 android:paddingEnd="10sp"
                 android:text="0"
-                android:background="@drawable/border_v2"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@color/black"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -78,7 +81,7 @@
                     android:paddingEnd="0dp"
                     android:text="Order Item"
                     android:textColor="@color/black"
-                    android:textSize="22sp"
+                    android:textSize="18sp"
                     android:textStyle="normal" />
 
                 <TextView
@@ -86,13 +89,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="5"
+                    android:fontFamily="@font/roboto_light"
                     android:gravity="center_vertical"
                     android:paddingStart="20dp"
                     android:paddingEnd="40dp"
                     android:text="\@   $ 0.00"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -107,8 +110,8 @@
                 android:paddingEnd="12dp"
                 android:text="$ 0.00"
                 android:textColor="@color/black"
-                android:textSize="24sp"
-                android:textStyle="normal" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

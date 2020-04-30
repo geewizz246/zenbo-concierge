@@ -43,7 +43,7 @@ public class FoodItemGridAdapter extends BaseAdapter {
 
         if (view == null) {
             final LayoutInflater layoutInflater = LayoutInflater.from(mContext);
-            view = layoutInflater.inflate(R.layout.list_item_order_menu, parent, false);
+            view = layoutInflater.inflate(R.layout.grid_item_order_menu, parent, false);
         }
 
         final ImageView imageView = view.findViewById(R.id.imageview_item_img);

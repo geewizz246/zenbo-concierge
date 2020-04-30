@@ -236,7 +236,9 @@ public class OrderSummaryActivity extends RobotActivity {
 
         // Display the number of order items
         TextView textViewOrderNumItems = findViewById(R.id.textview_order_summary_num_items);
-        textViewOrderNumItems.setText(String.format("(%d items)", order.getOrderItems().size()));
+        int numItems = order.getOrderItems().size();
+        String formatString = numItems > 1 ? "(%d items)" : "(%d item)";
+        textViewOrderNumItems.setText(String.format(formatString, order.getOrderItems().size()));
         // Display the order ID
         TextView textViewOrderId = findViewById(R.id.textview_order_summary_order_id);
         textViewOrderId.setText(Long.toString(order.getOrderId()));
@@ -271,12 +273,6 @@ public class OrderSummaryActivity extends RobotActivity {
 
         // Set up TextView for time
         textViewPickupTime = findViewById(R.id.textview_pickup_time);
-        textViewPickupTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpTimePickerDialog();
-            }
-        });
 
         // Set up TimePickerDialog
         btnSetPickupTime = findViewById(R.id.btn_set_pickup_time);
@@ -383,10 +379,6 @@ public class OrderSummaryActivity extends RobotActivity {
                     order.setRequestedPickUpTime(requestedPickUpTime);
                     Log.d(TAG, requestedPickUpTime.toString());
                     Log.d(TAG, order.toString());
-
-                    // Make button invisible and TextView visible
-                    btnSetPickupTime.setVisibility(View.GONE);
-                    textViewPickupTime.setVisibility(View.VISIBLE);
 
                     // Enable finish order button
                     btnConfirm.setEnabled(true);
