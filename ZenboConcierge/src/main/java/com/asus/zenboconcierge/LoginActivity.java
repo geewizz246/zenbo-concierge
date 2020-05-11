@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 
 import com.asus.robotframework.API.RobotFace;
 import com.asus.robotframework.API.RobotUtil;
+import com.asus.robotframework.API.SpeakConfig;
 import com.asus.zenboconcierge.dtos.Customer;
 import com.asus.robotframework.API.RobotCallback;
 import com.asus.robotframework.API.RobotCmdState;
@@ -92,21 +93,14 @@ public class LoginActivity extends RobotActivity {
 
         @Override
         public void onResult(JSONObject jsonObject) {
-//            String text;
-//            text = "onResult: " + jsonObject.toString();
-//            Log.d(TAG, text);
-//
-//            String sIntentionID = RobotUtil.queryListenResultJson(jsonObject, "IntentionId");
-//            Log.d(TAG, "Intention Id = " + sIntentionID);
-//
-//            if(sIntentionID.equals("loginContext")) {
-//                String sSluResultCity = RobotUtil.queryListenResultJson(jsonObject, "myCity1", null);
-//                Log.d(TAG, "Result City = " + sSluResultCity);
-//
-//                if(sSluResultCity!= null) {
-//                    mTextView.setText("You are now at " + sSluResultCity);
-//                }
-//            }
+            Log.d(TAG, "robotListenCallback.onResult: " + jsonObject.toString());
+
+            String sIntentionID = RobotUtil.queryListenResultJson(jsonObject, "IntentionId");
+            Log.d(TAG, "IntentionID = " + sIntentionID);
+
+            if (sIntentionID.equals("loginToApp")) {
+                Log.d(TAG, "Login command registered");
+            }
         }
 
         @Override
@@ -187,11 +181,14 @@ public class LoginActivity extends RobotActivity {
         // Close face
         robotAPI.robot.setExpression(RobotFace.HIDEFACE);
 
-//        // Jump to dialog domain plan
-//        // Dunno if this works
+        // Jump to dialog domain plan
+        // Dunno if this works
         robotAPI.robot.jumpToPlan(DOMAIN, PLAN);
 
-        robotAPI.robot.speak(getString(R.string.zenbo_speak_login_prompt));
+        // Greet user and wait for them to say "Login"
+        SpeakConfig speakConfig = new SpeakConfig();
+        speakConfig.timeout(30);    // 30s
+        robotAPI.robot.speakAndListen(getString(R.string.zenbo_speak_login_prompt), speakConfig);
     }
 
     @Override
@@ -279,7 +276,9 @@ public class LoginActivity extends RobotActivity {
                 createAlertDialog();
 
                 // Make Zenbo speak
-                robotAPI.robot.speak(getString(R.string.zenbo_speak_login_fail));
+                SpeakConfig speakConfig = new SpeakConfig();
+                speakConfig.timeout(30);    // 30s
+                robotAPI.robot.speakAndListen(getString(R.string.zenbo_speak_login_fail), speakConfig);
 
                 // Enable views again
                 btnLogin.setEnabled(true);
