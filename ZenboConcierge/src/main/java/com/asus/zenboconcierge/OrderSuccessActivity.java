@@ -24,7 +24,7 @@ public class OrderSuccessActivity extends RobotActivity {
     private int currentApiVersion;
     private static final String TAG = "OrderSuccessActivity";
 
-    private Customer customer;
+    private User user;
     private Order order;
 
     private Context context = OrderSuccessActivity.this;
@@ -107,7 +107,7 @@ public class OrderSuccessActivity extends RobotActivity {
         }
 
         Intent intent = getIntent();
-        customer = intent.getParcelableExtra("customer");
+        user = intent.getParcelableExtra("user");
         order = intent.getParcelableExtra("order");
 
         TextView textViewOrderID = findViewById(R.id.textview_order_success_order_id);
@@ -126,7 +126,7 @@ public class OrderSuccessActivity extends RobotActivity {
         });
 
         String orderTime = new SimpleDateFormat("hh:mm a").format(order.getRequestedPickUpTime());
-        robotAPI.robot.speak(String.format(getString(R.string.zenbo_speak_order_success), customer.getFirstName(), orderTime));
+        robotAPI.robot.speak(String.format(getString(R.string.zenbo_speak_order_success), user.getFirstName(), orderTime));
     }
 
     @Override

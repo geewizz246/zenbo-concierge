@@ -28,13 +28,13 @@ public class Order implements Parcelable {
     private Boolean isFulfilled = false;
     private Timestamp timeFulfilled;
     private double total = 0.00;
-    private String customer;
+    private String user;
     private List<OrderItem> orderItems = new ArrayList<>();
     private OrderMetadata orderMetadata;
 
     public Order() {}
 
-    public Order(long orderId, Timestamp orderDate, Boolean orderSuccessful, Timestamp requestedPickUpTime, Timestamp actualPickUpTime, Boolean isPaid, Timestamp timePaid, Boolean isFulfilled, Timestamp timeFulfilled, double total, String customer, List<OrderItem> orderItems, OrderMetadata orderMetadata) {
+    public Order(long orderId, Timestamp orderDate, Boolean orderSuccessful, Timestamp requestedPickUpTime, Timestamp actualPickUpTime, Boolean isPaid, Timestamp timePaid, Boolean isFulfilled, Timestamp timeFulfilled, double total, String user, List<OrderItem> orderItems, OrderMetadata orderMetadata) {
         this.orderId = orderId;
         this.orderDate = orderDate;
         this.orderSuccessful = orderSuccessful;
@@ -45,7 +45,7 @@ public class Order implements Parcelable {
         this.isFulfilled = isFulfilled;
         this.timeFulfilled = timeFulfilled;
         this.total = total;
-        this.customer = customer;
+        this.user = user;
         this.orderItems = orderItems;
         this.orderMetadata = orderMetadata;
     }
@@ -67,7 +67,7 @@ public class Order implements Parcelable {
         longDate = inParcel.readLong();
         this.timeFulfilled = longDate != 0 ? new Timestamp(longDate) : null;
         this.total = inParcel.readDouble();
-        this.customer = inParcel.readString();
+        this.user = inParcel.readString();
         inParcel.readTypedList(this.orderItems, OrderItem.CREATOR);
         this.orderMetadata = inParcel.readParcelable(OrderMetadata.class.getClassLoader());
     }
@@ -80,7 +80,7 @@ public class Order implements Parcelable {
             this.isPaid = json.getBoolean("isPaid");
             this.isFulfilled = json.getBoolean("isFulfilled");
             this.total = json.getDouble("total");
-            this.customer = json.getString("customer");
+            this.user = json.getString("user");
             this.orderMetadata = new OrderMetadata(json.getJSONObject("orderMetadata"));
 
             // Handle dates
@@ -186,12 +186,12 @@ public class Order implements Parcelable {
         this.total = total;
     }
 
-    public String getCustomer() {
-        return customer;
+    public String getUser() {
+        return user;
     }
 
-    public void setCustomer(String customer) {
-        this.customer = customer;
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public List<OrderItem> getOrderItems() {
@@ -230,7 +230,7 @@ public class Order implements Parcelable {
             json.put("isFulfilled",  this.isFulfilled);
             json.put("timeFulfilled", this.timeFulfilled != null ? dateFormat.format(this.timeFulfilled) : JSONObject.NULL);
             json.put("total", this.total);
-            json.put("customer", this.customer);
+            json.put("user", this.user);
             json.put("orderMetadata", this.orderMetadata.toJson());
 
             // Handle orderItems
@@ -267,7 +267,7 @@ public class Order implements Parcelable {
         outParcel.writeByte((byte) (this.isFulfilled ? 1 : 0));
         outParcel.writeLong(this.timeFulfilled != null ? this.timeFulfilled.getTime() : 0);
         outParcel.writeDouble(this.total);
-        outParcel.writeString(this.customer);
+        outParcel.writeString(this.user);
         outParcel.writeTypedList(this.orderItems);
         outParcel.writeParcelable(this.orderMetadata, flags);
     }

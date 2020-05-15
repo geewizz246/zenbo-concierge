@@ -14,12 +14,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.asus.robotframework.API.RobotFace;
 import com.asus.robotframework.API.RobotUtil;
 import com.asus.robotframework.API.SpeakConfig;
-import com.asus.zenboconcierge.dtos.Customer;
+import com.asus.zenboconcierge.dtos.User;
 import com.asus.robotframework.API.RobotCallback;
 import com.asus.robotframework.API.RobotCmdState;
 import com.asus.robotframework.API.RobotErrorCode;
@@ -44,6 +46,8 @@ public class LoginActivity extends RobotActivity {
     private final Context context = LoginActivity.this;
     private String alertMsg = null;
 
+    private static TextView textViewResponse;
+    private static ImageView imageViewAppLogo;
     private EditText editTextEmail, editTextPin;
     private Button btnLogin;
     private ProgressBar progress;
@@ -70,7 +74,7 @@ public class LoginActivity extends RobotActivity {
         }
     };
 
-    public static RobotCallback.Listen robotListenCallback = new RobotCallback.Listen() {
+    public static final RobotCallback.Listen robotListenCallback = new RobotCallback.Listen() {
         @Override
         public void onFinishRegister() {
 
@@ -93,12 +97,19 @@ public class LoginActivity extends RobotActivity {
 
         @Override
         public void onResult(JSONObject jsonObject) {
+            // Testing purposes
+            textViewResponse.setText(jsonObject.toString());
+            imageViewAppLogo.setVisibility(View.GONE);
+            textViewResponse.setVisibility(View.VISIBLE);
             Log.d(TAG, "robotListenCallback.onResult: " + jsonObject.toString());
 
             String sIntentionID = RobotUtil.queryListenResultJson(jsonObject, "IntentionId");
             Log.d(TAG, "IntentionID = " + sIntentionID);
 
             if (sIntentionID.equals("loginToApp")) {
+                // Testing purposes
+                textViewResponse.setText(textViewResponse.getText() + "\n\nLogin command registered");
+
                 Log.d(TAG, "Login command registered");
             }
         }
@@ -118,6 +129,10 @@ public class LoginActivity extends RobotActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         Log.d(TAG, TAG + " created");
+
+        // Testing elements
+        imageViewAppLogo = findViewById(R.id.imageview_app_logo);
+        textViewResponse = findViewById(R.id.textview_test_dde_json_res);
 
         // Hide navigation bar
         currentApiVersion = Build.VERSION.SDK_INT;
@@ -239,13 +254,13 @@ public class LoginActivity extends RobotActivity {
         HttpUtils.post("login", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Customer customer = new Customer();
+                User user = new User();
 
                 try {
-                    customer.setEmail(response.getString("email"));
-                    customer.setFirstName(response.getString("firstName"));
-                    customer.setLastName(response.getString("lastName"));
-                    customer.setPhone(response.getString("phone"));
+                    user.setEmail(response.getString("email"));
+                    user.setFirstName(response.getString("firstName"));
+                    user.setLastName(response.getString("lastName"));
+                    user.setPhone(response.getString("phone"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -253,9 +268,9 @@ public class LoginActivity extends RobotActivity {
                 // Stop progress bar
                 progress.setVisibility(View.GONE);
 
-                // Create the menu intent and attach the customer object
+                // Create the menu intent and attach the user object
                 Intent menuIntent = new Intent(context, MenuActivity.class);
-                menuIntent.putExtra("customer", customer);
+                menuIntent.putExtra("user", user);
                 context.startActivity(menuIntent);
                 finish();
             }

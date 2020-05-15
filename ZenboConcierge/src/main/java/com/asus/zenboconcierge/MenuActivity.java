@@ -58,7 +58,7 @@ public class MenuActivity extends RobotActivity {
     private static Boolean isMenuActive = false;
 
     private Date orderStartTime;
-    private Customer customer;
+    private User user;
     private Order order;
     private OrderMetadata orderMetadata;
     private final List<FoodItem> foodItemList = new ArrayList<>();
@@ -152,9 +152,9 @@ public class MenuActivity extends RobotActivity {
         Toolbar actionBar = findViewById(R.id.action_bar);
         setActionBar(actionBar);
 
-        // Get customer passed from login screen
+        // Get user passed from login screen
         Intent loginIntent = getIntent();
-        customer = loginIntent.getParcelableExtra("customer");
+        user = loginIntent.getParcelableExtra("user");
 
         setUpMenuAndOrder();
         registerButtons();
@@ -165,14 +165,14 @@ public class MenuActivity extends RobotActivity {
         // Greet user; wait for them select items, or say "Checkout" or "Cancel"
         SpeakConfig speakConfig = new SpeakConfig();
         speakConfig.timeout(30);    // 30s
-        robotAPI.robot.speakAndListen(String.format(getString(R.string.zenbo_speak_menu_greeting), customer.getFirstName()), speakConfig);
+        robotAPI.robot.speakAndListen(String.format(getString(R.string.zenbo_speak_menu_greeting), user.getFirstName()), speakConfig);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelable("customer", customer);
+        outState.putParcelable("user", user);
         outState.putParcelable("order", order);
         outState.putParcelableArrayList("orderItems", (ArrayList<? extends Parcelable>) orderItemList);
     }
@@ -183,7 +183,7 @@ public class MenuActivity extends RobotActivity {
         Log.d(TAG, TAG + " resumed");
         isMenuActive = true;
 
-        enableButtons();
+        changeButtonStatus(true);
 
         if (order != null) {
             // Assume the order is still being performed
@@ -278,8 +278,7 @@ public class MenuActivity extends RobotActivity {
 
         Order initOrder = new Order();
         initOrder.setOrderDate(new Timestamp(orderStartTime.getTime()));
-        initOrder.setRequestedPickUpTime(new Timestamp(orderStartTime.getTime()));
-        initOrder.setCustomer(customer.getEmail());
+        initOrder.setUser(user.getEmail());
         orderMetadata = new OrderMetadata();
         initOrder.setOrderMetadata(orderMetadata);
 
@@ -362,7 +361,7 @@ public class MenuActivity extends RobotActivity {
         TextView textViewTotal = findViewById(R.id.textview_order_preview_total);
         textViewTotal.setText(String.format("$ %.2f", order.getTotal()));
 
-        enableButtons();
+        changeButtonStatus(true);
     }
 
     private void saveOrder() {
@@ -374,8 +373,7 @@ public class MenuActivity extends RobotActivity {
         Log.d(TAG, order.toString());
 
         // Disable buttons to prevent double submission
-        btnCheckout.setEnabled(false);
-        btnCancel.setEnabled(false);
+        changeButtonStatus(false);
 
         StringEntity orderEntity = null;
         String url = "order/update/" + order.getOrderId();
@@ -393,14 +391,14 @@ public class MenuActivity extends RobotActivity {
 //                super.onSuccess(statusCode, headers, response);
                 order = new Order(response);
 
-                enableButtons();
+                changeButtonStatus(true);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.d(TAG, errorResponse.toString());
 
-                enableButtons();
+                changeButtonStatus(true);
             }
         });
     }
@@ -409,9 +407,9 @@ public class MenuActivity extends RobotActivity {
         // Set menu to be inactive
         isMenuActive = false;
 
-        // Create the order summary intent and attach the customer and order
+        // Create the order summary intent and attach the user and order
         Intent orderSummaryIntent = new Intent(context, OrderSummaryActivity.class);
-        orderSummaryIntent.putExtra("customer", customer);
+        orderSummaryIntent.putExtra("user", user);
         orderSummaryIntent.putExtra("finalOrder", order);
         context.startActivity(orderSummaryIntent);
     }
@@ -494,10 +492,10 @@ public class MenuActivity extends RobotActivity {
         alertDialog.show();
     }
 
-    private void enableButtons() {
-        btnCancel.setEnabled(true);
+    private void changeButtonStatus(boolean enabled) {
+        btnCancel.setEnabled(enabled);
         if (orderItemList.size() > 0) {
-            btnCheckout.setEnabled(true);
+            btnCheckout.setEnabled(enabled);
         } else {
             btnCheckout.setEnabled(false);
         }

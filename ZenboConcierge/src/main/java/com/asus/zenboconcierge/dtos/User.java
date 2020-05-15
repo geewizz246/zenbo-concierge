@@ -3,22 +3,22 @@ package com.asus.zenboconcierge.dtos;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Customer implements Parcelable {
+public class User implements Parcelable {
     private String email;
     private String firstName;
     private String lastName;
     private String phone;
 
-    public Customer() {}
+    public User() {}
 
-    public Customer(String email, String firstName, String lastName, String phone) {
+    public User(String email, String firstName, String lastName, String phone) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
     }
     
-    public Customer(Parcel inParcel) {
+    public User(Parcel inParcel) {
         this.email = inParcel.readString();
         this.firstName = inParcel.readString();
         this.lastName = inParcel.readString();
@@ -70,13 +70,13 @@ public class Customer implements Parcelable {
         outParcel.writeString(this.phone);
     }
 
-    public static final Parcelable.Creator<Customer> CREATOR = new Parcelable.Creator<Customer>() {
-        public Customer createFromParcel(Parcel in) {
-            return new Customer(in);
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
         }
 
-        public Customer[] newArray(int size) {
-            return new Customer[size];
+        public User[] newArray(int size) {
+            return new User[size];
         }
     };
 }

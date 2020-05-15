@@ -19,13 +19,25 @@
         android:orientation="vertical"
         android:weightSum="10">
 
+        <TextView
+            android:id="@+id/textview_test_dde_json_res"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:gravity="center"
+            android:text="DDE JSON Response"
+            android:textColor="@color/white"
+            android:visibility="gone"/>
+
         <ImageView
+            android:id="@+id/imageview_app_logo"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="5"
             android:src="@drawable/clipart_robot" />
 
         <TextView
+            android:id="@+id/textview_app_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -53,6 +65,7 @@
         app:cardElevation="5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_layout_login"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:descendantFocusability="beforeDescendants"

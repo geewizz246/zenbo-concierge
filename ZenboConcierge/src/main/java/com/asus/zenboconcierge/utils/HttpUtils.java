@@ -9,13 +9,13 @@ import com.loopj.android.http.RequestParams;
 import cz.msebera.android.httpclient.HttpEntity;
 
 public class HttpUtils {
-    public static final String DEFAULT_BASE_URL = "https://zenbo-concierge-backend.herokuapp.com/";
-    public static final String TEST_BASE_URL = "http://10.0.2.2:8080/";
+    private static final String DEFAULT_BASE_URL = "https://zenbo-concierge-backend.herokuapp.com/";
+    private static final String TEST_BASE_URL = "http://10.0.2.2:8080/";
     private static String baseUrl;
     private static AsyncHttpClient client = new AsyncHttpClient();
     static {
-        baseUrl = DEFAULT_BASE_URL;
-//        baseUrl = TEST_BASE_URL;
+//        baseUrl = DEFAULT_BASE_URL;
+        baseUrl = TEST_BASE_URL;
     }
 
     public static String getBaseUrl() {

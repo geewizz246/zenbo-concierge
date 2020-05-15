@@ -23,7 +23,7 @@ import android.widget.Toolbar;
 import com.asus.robotframework.API.RobotCallback;
 import com.asus.robotframework.API.RobotCmdState;
 import com.asus.robotframework.API.RobotErrorCode;
-import com.asus.zenboconcierge.dtos.Customer;
+import com.asus.zenboconcierge.dtos.User;
 import com.asus.zenboconcierge.dtos.Order;
 import com.asus.zenboconcierge.dtos.OrderItem;
 import com.asus.zenboconcierge.dtos.OrderMetadata;
@@ -52,7 +52,7 @@ public class OrderSummaryActivity extends RobotActivity {
     private static final String TAG = "OrderSummaryActivity";
     public static Boolean isOrderSummaryActive = false;
 
-    private Customer customer;
+    private User user;
     private Order order;
     private OrderMetadata orderMetadata;
     private List<OrderItem> orderItems;
@@ -60,9 +60,7 @@ public class OrderSummaryActivity extends RobotActivity {
     private String alertMsg = null;
 
     private AlertDialog alertDialog;
-    private TimePickerDialog timePicker;
     private Button btnConfirm, btnSetPickupTime;
-    private ImageButton btnBack;
     private TextView textViewPickupTime;
 
     public static RobotCallback robotCallback = new RobotCallback() {
@@ -129,14 +127,14 @@ public class OrderSummaryActivity extends RobotActivity {
 
         // Get the intent that started this activity and extract extras
         Intent intent = getIntent();
-        customer = intent.getParcelableExtra("customer");
+        user = intent.getParcelableExtra("user");
         order = intent.getParcelableExtra("finalOrder");
         orderItems = order.getOrderItems();
         orderMetadata = order.getOrderMetadata();
 
         setUpOrderSummary();
 
-        btnBack = findViewById(R.id.btn_back_to_menu);
+        ImageButton btnBack = findViewById(R.id.btn_back_to_menu);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,7 +155,7 @@ public class OrderSummaryActivity extends RobotActivity {
 
                 // Go to Success Activity
                 Intent successIntent = new Intent(context, OrderSuccessActivity.class);
-                successIntent.putExtra("customer", customer);
+                successIntent.putExtra("user", user);
                 successIntent.putExtra("order", order);
                 context.startActivity(successIntent);
 
@@ -177,6 +175,8 @@ public class OrderSummaryActivity extends RobotActivity {
         super.onResume();
         Log.d(TAG, TAG + " resumed");
         isOrderSummaryActive = true;
+
+        changeButtonStatus(true);
 
         if (order != null) {
             // Assume the order is still being performed
@@ -293,8 +293,7 @@ public class OrderSummaryActivity extends RobotActivity {
         Log.d(TAG, order.toString());
 
         // Disable buttons
-        btnSetPickupTime.setEnabled(false);
-        btnConfirm.setEnabled(false);
+        changeButtonStatus(false);
 
         StringEntity orderEntity = null;
         String url = "order/update/" + order.getOrderId();
@@ -318,10 +317,7 @@ public class OrderSummaryActivity extends RobotActivity {
                 Log.d(TAG, errorResponse.toString());
 
                 // Enable buttons
-                btnSetPickupTime.setEnabled(true);
-                if (btnSetPickupTime.getVisibility() == View.GONE) {
-                    btnConfirm.setEnabled(true);
-                }
+                changeButtonStatus(true);
             }
         });
     }
@@ -387,7 +383,16 @@ public class OrderSummaryActivity extends RobotActivity {
         };
 
         // Time Picker Dialog
-        timePicker = new TimePickerDialog(context, R.style.MyTimePickerDialogStyle, onTimeSetListener, hour, minutes, false);
+        TimePickerDialog timePicker = new TimePickerDialog(context, R.style.MyTimePickerDialogStyle, onTimeSetListener, hour, minutes, false);
         timePicker.show();
+    }
+
+    private void changeButtonStatus(boolean enabled) {
+        btnSetPickupTime.setEnabled(enabled);
+        if (order.getRequestedPickUpTime() != null) {
+            btnConfirm.setEnabled(enabled);
+        } else {
+            btnConfirm.setEnabled(false);
+        }
     }
 }
