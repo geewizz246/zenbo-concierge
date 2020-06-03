@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.asus.zenboconcierge.MenuActivity;
 import com.asus.zenboconcierge.R;
-import com.asus.zenboconcierge.dtos.FoodItem;
 import com.asus.zenboconcierge.dtos.OrderItem;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
@@ -89,7 +88,7 @@ public class OrderPreviewListAdapter extends ArrayAdapter<OrderItem> {
                 item.setQuantityOrdered(newValue);
                 items.set(position, item);
 
-                ((MenuActivity) mContext).updateOrder();
+                ((MenuActivity) mContext).updateOrderPreview();
             }
         });
 
@@ -99,7 +98,7 @@ public class OrderPreviewListAdapter extends ArrayAdapter<OrderItem> {
             public void onClick(View view) {
                 items.remove(position);
 
-                ((MenuActivity) mContext).updateOrder();
+                ((MenuActivity) mContext).updateOrderPreview();
                 notifyDataSetChanged();
             }
         });

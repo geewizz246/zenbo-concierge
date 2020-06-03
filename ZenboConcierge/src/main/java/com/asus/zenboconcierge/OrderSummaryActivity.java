@@ -23,6 +23,7 @@ import android.widget.Toolbar;
 import com.asus.robotframework.API.RobotCallback;
 import com.asus.robotframework.API.RobotCmdState;
 import com.asus.robotframework.API.RobotErrorCode;
+import com.asus.robotframework.API.RobotUtil;
 import com.asus.zenboconcierge.dtos.User;
 import com.asus.zenboconcierge.dtos.Order;
 import com.asus.zenboconcierge.dtos.OrderItem;
@@ -48,9 +49,10 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class OrderSummaryActivity extends RobotActivity {
-    private int currentApiVersion;
+    private static int currentApiVersion;
     private static final String TAG = "OrderSummaryActivity";
     public static Boolean isOrderSummaryActive = false;
+    private static OrderSummaryActivity thisActivity;
 
     private User user;
     private Order order;
@@ -61,6 +63,7 @@ public class OrderSummaryActivity extends RobotActivity {
 
     private AlertDialog alertDialog;
     private Button btnConfirm, btnSetPickupTime;
+    private ImageButton btnBack;
     private TextView textViewPickupTime;
 
     public static RobotCallback robotCallback = new RobotCallback() {
@@ -104,7 +107,22 @@ public class OrderSummaryActivity extends RobotActivity {
 
         @Override
         public void onResult(JSONObject jsonObject) {
+            Log.d(TAG, "robotListenCallback.onResult: " + jsonObject.toString());
 
+            String sIntentionID = RobotUtil.queryListenResultJson(jsonObject, "IntentionId");
+            Log.d(TAG, "IntentionID = " + sIntentionID);
+
+            if (sIntentionID.equals("confirmOrder")) {
+                Log.d(TAG, "Confirm order command registered");
+
+                // Call checkout function
+                thisActivity.btnConfirm.callOnClick();
+            } else if (sIntentionID.equals("cancelOrder")) {
+                Log.d(TAG, "Cancel command registered");
+
+                // Call cancel function
+                thisActivity.btnBack.callOnClick();
+            }
         }
 
         @Override
@@ -121,6 +139,9 @@ public class OrderSummaryActivity extends RobotActivity {
         setContentView(R.layout.activity_order_summary);
         Log.d(TAG, TAG + " created");
 
+        // Set static context
+        thisActivity = OrderSummaryActivity.this;
+
         // Set ActionBar
         Toolbar actionBar = findViewById(R.id.action_bar);
         setActionBar(actionBar);
@@ -134,7 +155,7 @@ public class OrderSummaryActivity extends RobotActivity {
 
         setUpOrderSummary();
 
-        ImageButton btnBack = findViewById(R.id.btn_back_to_menu);
+        btnBack = findViewById(R.id.btn_back_to_menu);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

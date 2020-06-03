@@ -22,8 +22,8 @@
     <string name="order_preview_total_title_placeholder">Total</string>
     <string name="btn_order_checkout_text">Checkout</string>
     <string name="btn_order_cancel_text">Cancel</string>
-    <string name="cancel_order_title">Are you sure?</string>
-    <string name="cancel_order_message">If you leave now, you will lose all progress on your order. This action cannot be undone.</string>
+    <string name="alert_cancel_order_title">Are you sure?</string>
+    <string name="alert_cancel_order_message">If you leave now, you will lose all progress on your order. This action cannot be undone.</string>
     <string name="login_subheading">Enter your credentials to continue.</string>
     <string name="order_summary_item_price_heading">Price</string>
     <string name="order_summary_item_quantity_heading">Quantity</string>
@@ -38,20 +38,15 @@
     <string name="hint_email">Enter UWI email</string>
     <string name="hint_pin">Enter 4-digit PIN</string>
     <string name="title_activity_main">MainActivity</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="zenbo_speak_login_fail">Oh no. Something went wrong. Please try again.</string>
     <string name="zenbo_speak_menu_greeting">Hello %s. Nice to see you. Select the items you want and let me know when you\'re ready to checkout.</string>
     <string name="zenbo_speak_cancel_warning">Are you sure you want to leave now? If you do, you\'ll lose all progress on your order.</string>
     <string name="zenbo_speak_order_success">Thank you %s. Your order was created successfully. Pickup is set for %s. Hope you enjoy your meal!</string>
     <string name="zenbo_speak_order_summary">Okay I received your order. Take a moment to review and select a pickup time.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="zenbo_speak_menu_greetings">
+        <item>Hello %s. Nice to see you. Select the items you want and let me know when you\'re ready to checkout.</item>
+        <item>%s. Glad you\'re back. Select the items you want and let me know when you are done.</item>
+        <item>Okay %s. Here is the menu. Choose what you want and checkout when you\'re ready.</item>
+    </string-array>
 </resources>

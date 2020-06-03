@@ -98,7 +98,6 @@ public class Order implements Parcelable {
 
             JSONArray orderItems = json.getJSONArray("orderItems");
             for (int i = 0; i < orderItems.length(); i++) {
-
                 this.orderItems.add(new OrderItem(orderItems.getJSONObject(i)));
             }
         } catch (JSONException | ParseException e) {

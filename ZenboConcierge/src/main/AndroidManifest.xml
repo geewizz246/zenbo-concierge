@@ -17,9 +17,7 @@
         <meta-data android:name="zenbo_ds_domainuuid" android:value="4BF19BF00E604E61AC287ED125FB48C7"/>
         <meta-data android:name="zenbo_ds_version_4BF19BF00E604E61AC287ED125FB48C7" android:value="0.0.1"/>
 
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
+        <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts" />
 
         <activity
             android:name=".LoginActivity"
@@ -29,7 +27,6 @@
                 <category android:name="com.asus.intent.category.ZENBO" />
                 <category android:name="com.asus.intent.category.ZENBO_LAUNCHER" />
                 <category android:name="android.intent.category.LAUNCHER" />
-<!--                <data android:name="com.asus.intent.data.MIN_ROBOT_API_LEVEL.1" />-->
             </intent-filter>
         </activity>
 

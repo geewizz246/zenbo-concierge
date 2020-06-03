@@ -14,8 +14,8 @@ public class HttpUtils {
     private static String baseUrl;
     private static AsyncHttpClient client = new AsyncHttpClient();
     static {
-//        baseUrl = DEFAULT_BASE_URL;
-        baseUrl = TEST_BASE_URL;
+        baseUrl = DEFAULT_BASE_URL;
+//        baseUrl = TEST_BASE_URL;
     }
 
     public static String getBaseUrl() {

@@ -34,20 +34,27 @@ import com.robot.asus.robotactivity.RobotActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class LoginActivity extends RobotActivity {
-    public int currentApiVersion;
+    public static int currentApiVersion;
     private static final String TAG = "LoginActivity";
     public final static String DOMAIN = "4BF19BF00E604E61AC287ED125FB48C7";
     public final static String PLAN = "launchZenboConcierge";
     private static String STATE_MSG;
+    private static LoginActivity thisActivity;
+
+    // For testing
+    private static TextView textViewResponse;
+    private static ImageView imageViewAppLogo;
 
     private final Context context = LoginActivity.this;
     private String alertMsg = null;
+    private int numRepetitionsLogin = 0;
 
-    private static TextView textViewResponse;
-    private static ImageView imageViewAppLogo;
     private EditText editTextEmail, editTextPin;
     private Button btnLogin;
     private ProgressBar progress;
@@ -69,7 +76,7 @@ public class LoginActivity extends RobotActivity {
 
         @Override
         public void initComplete() {
-            Log.d(TAG, "WOAH from oninit");
+            Log.d(TAG, "WOAH from robotCallback.initComplete()");
             super.initComplete();
         }
     };
@@ -88,6 +95,8 @@ public class LoginActivity extends RobotActivity {
         @Override
         public void onSpeakComplete(String s, String s1) {
             Log.d(TAG, "Zenbo dialog complete");
+            Log.d(TAG, s);
+            Log.d(TAG, s1);
         }
 
         @Override
@@ -109,8 +118,10 @@ public class LoginActivity extends RobotActivity {
             if (sIntentionID.equals("loginToApp")) {
                 // Testing purposes
                 textViewResponse.setText(textViewResponse.getText() + "\n\nLogin command registered");
-
                 Log.d(TAG, "Login command registered");
+
+                // Call login function
+                thisActivity.btnLogin.callOnClick();
             }
         }
 
@@ -129,6 +140,9 @@ public class LoginActivity extends RobotActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         Log.d(TAG, TAG + " created");
+
+        // Set static context
+        thisActivity = LoginActivity.this;
 
         // Testing elements
         imageViewAppLogo = findViewById(R.id.imageview_app_logo);
@@ -168,7 +182,6 @@ public class LoginActivity extends RobotActivity {
             btnLogin.setEnabled(false);
         }
 
-
         // Enable button if input for email is not empty
         editTextEmail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -185,6 +198,13 @@ public class LoginActivity extends RobotActivity {
 
             @Override
             public void afterTextChanged(Editable editable) { }
+        });
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLogin();
+            }
         });
     }
 
@@ -238,20 +258,29 @@ public class LoginActivity extends RobotActivity {
         }
     }
 
-    public void onLogin(View view) {
+    private void onLogin() {
         // Disable views to prevent input
         btnLogin.setEnabled(false);
         editTextEmail.setEnabled(false);
         editTextPin.setEnabled(false);
 
         // Get the input values
-        String email = editTextEmail.getText().toString();
-        String pin = editTextPin.getText().toString();
-        RequestParams params = new RequestParams();
-        params.put("email", email);
-        params.put("pin", pin);
+        JSONObject loginData = new JSONObject();
+        try {
+            loginData.put("email", editTextEmail.getText().toString());
+            loginData.put("pin", editTextPin.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        HttpUtils.post("login", params, new JsonHttpResponseHandler() {
+        StringEntity loginEntity = null;
+        try {
+            loginEntity = new StringEntity(loginData.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        HttpUtils.post(this, "login", loginEntity, "application/json", new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 User user = new User();
@@ -271,6 +300,7 @@ public class LoginActivity extends RobotActivity {
                 // Create the menu intent and attach the user object
                 Intent menuIntent = new Intent(context, MenuActivity.class);
                 menuIntent.putExtra("user", user);
+                menuIntent.putExtra("numRepetitionsLogin", numRepetitionsLogin);
                 context.startActivity(menuIntent);
                 finish();
             }
@@ -285,12 +315,16 @@ public class LoginActivity extends RobotActivity {
                     e.printStackTrace();
                 }
 
+                // Increase number of repetitions at login page
+                numRepetitionsLogin++;
+                Log.d(TAG, "Login Repeats: " + numRepetitionsLogin);
+
                 // Stop progress bar
                 progress.setVisibility(View.GONE);
 
                 createAlertDialog();
 
-                // Make Zenbo speak
+                // Inform user of error and prompt re-enter of login credentials
                 SpeakConfig speakConfig = new SpeakConfig();
                 speakConfig.timeout(30);    // 30s
                 robotAPI.robot.speakAndListen(getString(R.string.zenbo_speak_login_fail), speakConfig);

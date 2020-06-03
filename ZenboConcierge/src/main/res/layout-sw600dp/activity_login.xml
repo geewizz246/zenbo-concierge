@@ -138,7 +138,6 @@
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/btn_style_1"
-                android:onClick="onLogin"
                 android:paddingStart="24sp"
                 android:paddingTop="8dp"
                 android:paddingEnd="24sp"

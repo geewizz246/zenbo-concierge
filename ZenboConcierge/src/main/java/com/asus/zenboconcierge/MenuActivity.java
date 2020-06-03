@@ -24,6 +24,7 @@ import android.widget.Toolbar;
 import com.asus.robotframework.API.RobotCallback;
 import com.asus.robotframework.API.RobotCmdState;
 import com.asus.robotframework.API.RobotErrorCode;
+import com.asus.robotframework.API.RobotUtil;
 import com.asus.robotframework.API.SpeakConfig;
 import com.asus.zenboconcierge.dtos.*;
 
@@ -48,14 +49,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class MenuActivity extends RobotActivity {
-    private int currentApiVersion;
+    private static int currentApiVersion;
     private static final String TAG = "MenuActivity";
     private static Boolean isMenuActive = false;
+    private static MenuActivity thisActivity;
 
     private Date orderStartTime;
     private User user;
@@ -103,6 +106,8 @@ public class MenuActivity extends RobotActivity {
         @Override
         public void onSpeakComplete(String s, String s1) {
             Log.d(TAG, "Zenbo dialog complete");
+            Log.d(TAG, s);
+            Log.d(TAG, s1);
         }
 
         @Override
@@ -112,7 +117,22 @@ public class MenuActivity extends RobotActivity {
 
         @Override
         public void onResult(JSONObject jsonObject) {
+            Log.d(TAG, "robotListenCallback.onResult: " + jsonObject.toString());
 
+            String sIntentionID = RobotUtil.queryListenResultJson(jsonObject, "IntentionId");
+            Log.d(TAG, "IntentionID = " + sIntentionID);
+
+            if (sIntentionID.equals("createOrder")) {
+                Log.d(TAG, "Checkout command registered");
+
+                // Call checkout function
+                thisActivity.btnCheckout.callOnClick();
+            } else if (sIntentionID.equals("cancelOrder")) {
+                Log.d(TAG, "Cancel command registered");
+
+                // Call cancel function
+                thisActivity.btnCancel.callOnClick();
+            }
         }
 
         @Override
@@ -121,13 +141,18 @@ public class MenuActivity extends RobotActivity {
         }
     };
 
-    public MenuActivity() { super(robotCallback, robotListenCallback); }
+    public MenuActivity() {
+        super(robotCallback, robotListenCallback);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         Log.d(TAG, TAG + " created");
+
+        // Set static context
+        thisActivity = MenuActivity.this;
 
         // Hide navigation bar
         currentApiVersion = Build.VERSION.SDK_INT;
@@ -155,6 +180,9 @@ public class MenuActivity extends RobotActivity {
         // Get user passed from login screen
         Intent loginIntent = getIntent();
         user = loginIntent.getParcelableExtra("user");
+        int numRepetitionsLogin = loginIntent.getIntExtra("numRepetitionsLogin", 0);
+        orderMetadata = new OrderMetadata();
+        orderMetadata.setNumRepetitionsLogin(numRepetitionsLogin);
 
         setUpMenuAndOrder();
         registerButtons();
@@ -165,7 +193,13 @@ public class MenuActivity extends RobotActivity {
         // Greet user; wait for them select items, or say "Checkout" or "Cancel"
         SpeakConfig speakConfig = new SpeakConfig();
         speakConfig.timeout(30);    // 30s
-        robotAPI.robot.speakAndListen(String.format(getString(R.string.zenbo_speak_menu_greeting), user.getFirstName()), speakConfig);
+
+        String[] greetings = getResources().getStringArray(R.array.zenbo_speak_menu_greetings);
+        int randomGreetIndex = new Random().nextInt(greetings.length);
+        robotAPI.robot.speakAndListen(String.format(greetings[randomGreetIndex], user.getFirstName()), speakConfig);
+
+        // For testing
+        Log.d(TAG, greetings[randomGreetIndex]);
     }
 
     @Override
@@ -279,15 +313,12 @@ public class MenuActivity extends RobotActivity {
         Order initOrder = new Order();
         initOrder.setOrderDate(new Timestamp(orderStartTime.getTime()));
         initOrder.setUser(user.getEmail());
-        orderMetadata = new OrderMetadata();
         initOrder.setOrderMetadata(orderMetadata);
-
-        Log.d(TAG, initOrder.toString());
 
         StringEntity orderEntity = null;
 
         try {
-            orderEntity  = new StringEntity(initOrder.toString());
+            orderEntity = new StringEntity(initOrder.toString());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -332,7 +363,7 @@ public class MenuActivity extends RobotActivity {
                     orderItemList.add(orderItem);
                 }
                 setUpOrderPreviewListView();
-                updateOrder();
+                updateOrderPreview();
             }
         });
     }
@@ -345,7 +376,7 @@ public class MenuActivity extends RobotActivity {
         listViewOrderPreview.setAdapter(adapter);
     }
 
-    public void updateOrder() {
+    public void updateOrderPreview() {
         order.setOrderItems(orderItemList);
 
         TextView textViewOrderPreviewPlaceholder = findViewById(R.id.textview_order_preview_placeholder);
@@ -380,7 +411,7 @@ public class MenuActivity extends RobotActivity {
 
         String strOrder = StringEscapeUtils.unescapeJava(order.toString());
         try {
-            orderEntity  = new StringEntity(strOrder);
+            orderEntity = new StringEntity(strOrder);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -440,8 +471,8 @@ public class MenuActivity extends RobotActivity {
     private void cancelOrder() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this, R.style.MyAlertDialogStyle);
 
-        builder.setTitle(getString(R.string.cancel_order_title));
-        builder.setMessage(getString(R.string.cancel_order_message));
+        builder.setTitle(getString(R.string.alert_cancel_order_title));
+        builder.setMessage(getString(R.string.alert_cancel_order_message));
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -467,7 +498,6 @@ public class MenuActivity extends RobotActivity {
 
         robotAPI.robot.speak(getString(R.string.zenbo_speak_cancel_warning));
     }
-
 
 
     // ******************************************************
